@@ -268,7 +268,7 @@ function setupTabsAndModal(){
  function activateTab(id){buttons.forEach(btn=>{const on=btn.dataset.tab===id;btn.classList.toggle('active',on);btn.setAttribute('aria-selected',String(on))});document.querySelectorAll('[data-tab-panel]').forEach(p=>p.classList.toggle('tab-hidden',p.dataset.tabPanel!==id));try{sessionStorage.setItem('vantyr-active-tab',id)}catch(e){}}
  buttons.forEach(btn=>btn.addEventListener('click',()=>activateTab(btn.dataset.tab)));
  let previous='combat';try{previous=sessionStorage.getItem('vantyr-active-tab')||'combat'}catch(e){}
- activateTab(['combat','rolls','character','curses','spells'].includes(previous)?previous:'combat');
+ activateTab(['combat','rolls','character','curses','spells','concoction','inventory'].includes(previous)?previous:'combat');
  const overlay=el('rollModal');const close=()=>{overlay.hidden=true;overlay.setAttribute('aria-hidden','true')};
  overlay.addEventListener('click',e=>{if(e.target===overlay)close()});
  el('modalClose').addEventListener('click',close);
