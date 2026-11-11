@@ -5,7 +5,7 @@
 <meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="#120e17" name="theme-color"/><title>Vantyr | Character Helper</title>
 <link href="style.css" rel="stylesheet"/><script defer="" src="ascendants.js"></script><script defer="" src="app.js"></script><script defer="" src="curses.js"></script>
-<script defer="" src="layout.js"></script><script defer="" src="spells.js"></script><script defer="" src="racial.js"></script><script defer="" src="vecna.js"></script><script defer="" src="future.js"></script><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="yes" name="mobile-web-app-capable"/><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/><link href="manifest.webmanifest" rel="manifest"/><link href="mobile.css" rel="stylesheet"/><script defer="" src="mobile.js"></script></head>
+<script defer="" src="layout.js"></script><script defer="" src="spells.js"></script><script defer="" src="racial.js"></script><script defer="" src="vecna.js"></script><script defer="" src="future.js"></script><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="yes" name="mobile-web-app-capable"/><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/><link href="manifest.webmanifest" rel="manifest"/><link href="mobile.css" rel="stylesheet"/><script defer="" src="mobile.js"></script><link href="concoction.css" rel="stylesheet"/><script defer="" src="concoction-data.js"></script><script defer="" src="concoction.js"></script></head>
 <body><div class="app-shell" id="app">
 <header class="topbar"><div class="brand"><span class="crest">♛</span><div><div class="eyebrow">THE VAMPIRE LORD</div><h1>VANTYR <span class="muted">/ CHARACTER HELPER</span></h1></div></div><div class="top-actions"><span class="small-label" id="saveStatus">Saved locally</span><button class="ghost-btn" id="resetBtn">Reset values</button><button aria-pressed="false" class="developer-toggle" id="developerModeBtn" title="Enable grid editing and drag cards into position" type="button">⚙ Dev Mode</button></div></header><section class="hero panel">
 <div class="hero-identity">
@@ -34,7 +34,7 @@
 <div class="combat-actions"><button class="gold-btn" id="combatBtn">⚔ Start Combat</button></div>
 <div class="hint" id="combatStatus">Out of combat · Roleplay mode</div>
 </div>
-</section><nav aria-label="Main navigation" class="chapter-nav tab-nav" role="tablist"><button aria-selected="true" class="tab-btn active" data-tab="combat" role="tab">⚔ Combat</button><button aria-selected="false" class="tab-btn" data-tab="rolls" role="tab">🎲 Rolls &amp; Saves</button><button aria-selected="false" class="tab-btn" data-tab="character" role="tab">♛ Character</button><button aria-selected="false" class="tab-btn" data-tab="curses" role="tab">🩸 Blood Curses</button><button aria-selected="false" class="tab-btn" data-tab="spells" role="tab">✦ Spells</button></nav><div class="layout-edit-hint" hidden="" id="layoutEditHint">⠿ Developer Mode ON · Drag card handles to rearrange within each section. Layout saves automatically. Turn off to lock.</div>
+</section><nav aria-label="Main navigation" class="chapter-nav tab-nav" role="tablist"><button aria-selected="true" class="tab-btn active" data-tab="combat" role="tab">⚔ Combat</button><button aria-selected="false" class="tab-btn" data-tab="rolls" role="tab">🎲 Rolls</button><button aria-selected="false" class="tab-btn" data-tab="character" role="tab">♛ Character</button><button aria-selected="false" class="tab-btn" data-tab="curses" role="tab">🩸 Curses</button><button aria-selected="false" class="tab-btn" data-tab="spells" role="tab">✦ Spells</button><button aria-selected="false" class="tab-btn" data-tab="concoction" role="tab">⚗ Brew</button><button aria-selected="false" class="tab-btn" data-tab="inventory" role="tab">🎒 Bag</button></nav><div class="layout-edit-hint" hidden="" id="layoutEditHint">⠿ Developer Mode ON · Drag card handles to rearrange within each section. Layout saves automatically. Turn off to lock.</div>
 <main class="tab-pane" data-layout-zone="combat-sections" data-tab-panel="combat" id="tab-combat" role="tabpanel"><section class="panel hp-panel"><div class="section-head"><h3>LIVE HIT POINTS / BLOOD ARROWS</h3><span class="hint">−2 HP per attack roll, regardless of hit</span></div><div class="hp-row"><div><span class="eyebrow">CURRENT HP</span><strong id="currentHpText">178 / 178</strong></div><input aria-label="Current HP" id="currentHp" max="178" min="0" type="number" value="178"/><button class="ghost-btn" id="healFullBtn">Restore to Max</button></div><div class="hp-track-grid">
 <div class="hp-bar-unit"><div class="hp-bar-caption"><span>♥ Vitality</span><span>Regular HP</span></div><div class="hp-track"><div id="hpFill"></div></div></div>
 <div class="hp-bar-unit temp-hp-unit"><div class="hp-bar-caption"><span>✦ Temporary HP</span><strong id="tempHpText">0 TEMP HP</strong></div><div aria-label="Temporary Hit Points" aria-valuemin="0" aria-valuenow="0" class="temp-track" id="tempHpTrack" role="progressbar"><div id="tempHpFill"></div></div></div>
@@ -124,7 +124,89 @@
 </section><section class="tab-pane tab-hidden" data-tab-panel="spells" id="tab-spells" role="tabpanel">
 <section class="panel blood-spells-header"><div class="section-head"><div><div class="eyebrow">ONE TRUE VAMPIRE · INNATE MAGIC</div><h3>✦ SPELLS &amp; SUPERNATURAL CASTING</h3><p class="hint">No conventional spell slots · abilities use their own rest-based charges. Every spell shows its racial source and a concise 2014 5e rules reference.</p></div><div class="spell-dc-box"><span>VANTYR SPELL SAVE DC</span><strong id="spellDCDisplay">20</strong><small id="spellFormDisplay">Normal Form</small></div></div><div class="spell-card-grid" data-layout-zone="spell-cards" id="spellCards"></div><details class="vecna-spell-section" open=""><summary>◉ HAND &amp; EYE OF VECNA · ARTIFACT SPELLS</summary><p class="hint">These spells use artifact charges instead of spell slots. Save DC 18.</p><div class="spell-card-grid" id="vecnaSpellCards"></div></details>
 <div class="spell-rest-guide"><span>☾ Spell powers refresh automatically on Long Rest (Blood Curses → Long Rest, Ascendant Forms → Long Rest).</span><button class="ghost-btn" id="spellLongRest" type="button">☾ Long Rest · Restore Powers</button></div></section>
-</section><section class="tab-pane tab-hidden" data-layout-zone="character-sections" data-tab-panel="character" id="tab-character" role="tabpanel"><details class="vecna-panel foldout" data-vecna-area=""><summary><span class="vecna-sigil">◉</span><span><strong>THE HAND &amp; EYE OF VECNA</strong><small>Legendary artifacts · 8 + 8 charges · spell DC 18</small></span><span class="vecna-quick" data-vecna-totals="">Eye 8/8 · Hand 8/8</span></summary><div class="vecna-reveal"><img alt="The Hand and Eye of Vecna" class="vecna-art" src="assets/hand-eye-vecna.jpg"/><div class="vecna-magic">✧ THE WHISPERED ONE ✧</div></div><div class="vecna-app" data-vecna-root=""></div></details><div class="quick-grid" data-layout-zone="quick-stats" id="quickStats"></div><div class="columns" id="abilitiesSection"><section class="panel"><div class="section-head"><h3>ABILITY SCORES</h3><span class="hint">Editable · Active form</span></div><div class="ability-grid" data-layout-zone="ability-scores" id="abilities"></div></section></div><section class="panel"><div class="section-head"><h3>FEATS &amp; FIGHTING STYLE</h3></div><div class="chips"><span>Alert</span><span>Tough</span><span>Crossbow Expert</span><span>Archery (+2, already included in +18)</span></div></section><details class="one-true-race foldout" id="futureDevilLore"><summary><span class="blood-race-icon">◈</span><span><strong>CONTRACT OF THE FUTURE DEVIL</strong><small>Legendary Feat · bound devil · Foresight and probability</small></span></summary><div class="vampire-reference"><article class="vampire-entry"><h4>Contract of the Future Devil</h4><p>A devil inhabits part of Vantyr's mind, seeing significant futures and bending their outcome. Intelligence 16+ prerequisite. Binding contract, removable only by divine intervention, Wish, or a party's death.</p><h4>Absolute Foresight</h4><p>Cannot be surprised while conscious. Intelligence modifier and Advantage on Initiative are already included in Stand by the Emperor; initiative stays +25.</p><h4>One Step Ahead</h4><p>Gains a d6 at combat start and each Vantyr turn, saving unused dice. Spend d6 to add or subtract from attack rolls, ability checks, saving throws or a creature's AC until end of turn.</p><h4>Future Is Set</h4><p>Once per Long Rest when rolling Initiative: Advantage on attacks, ability checks and saves; incoming attacks against you have disadvantage. Once per round when an enemy misses, move your speed without provoking opportunity attacks. Ends if incapacitated.</p><h4>Foreseen Outcome</h4><p>Reaction when a creature within 60 ft attacks, checks or saves: Absolute Failure (3/LR, 10 HP), Absolute Success (3/LR, 10 HP, not a crit), or Weighted Probability (unlimited, 30 HP, impose Advantage or Disadvantage). All costs include the Price of Knowing once, bypass Temp HP and resistance. Dropping to 0 from these costs leaves you at 1 HP and +1 Exhaustion.</p></article></div></details><details class="one-true-race foldout" id="oneTrueRace"><summary><span class="blood-race-icon">🦇</span> <span><strong>THE ONE TRUE VAMPIRE</strong><small>Racial powers · roleplay lore · restrictions · unlocks</small></span></summary>
+</section><section class="tab-pane tab-hidden" data-tab-panel="concoction" id="tab-concoction" role="tabpanel">
+  <section class="panel cc-head">
+    <div class="cc-eyebrow">VANTYR'S ALCHEMICAL CODEX</div>
+    <h3>⚗ Concoction</h3>
+    <p>169 crafting recipes from your supplied guide. Browse by kit and rarity, search effects, and craft through the Devil's Cauldron. The recipe's book DC is shown separately from your custom success thresholds.</p>
+    <label class="cc-search-wrap"><span aria-hidden="true">⌕</span><input id="ccSearch" type="search" placeholder="Find a potion, poison or effect…" autocomplete="off" aria-label="Search crafting recipes"/></label>
+    <div class="cc-eyebrow">CRAFTING KIT</div>
+    <div class="cc-filter-row" id="ccCategories"></div>
+    <div class="cc-eyebrow">BOOK RARITY / RECIPE DC</div>
+    <div class="cc-filter-row" id="ccRarities"></div>
+    <div class="cc-statline"><span id="ccResultCount">Loading recipes…</span><span>Book DC 7 / 8 / 12 / 15 / 18</span></div>
+    <div class="cc-recipe-list" id="ccRecipes"></div>
+  </section>
+  <section class="panel cc-cauldron-panel" id="ccCauldronPanel">
+    <div class="cc-cauldron-header">
+      <div><div class="cc-eyebrow">THE DEVIL'S CAULDRON</div><h3>✦ Craft</h3></div>
+      <label class="cc-switch" title="Turn crafting audio on or off"><input id="ccMute" type="checkbox"/> 🔇 Mute</label>
+    </div>
+    <p class="cc-muted">Two separate d20s: Arcana +10, then Medicine +5. Your personal lab adds +10 to their combined total. Each roll also respects existing Exhaustion penalties on skill checks.</p>
+    <div class="cc-labrow"><label class="cc-switch"><input id="ccLab" type="checkbox"/><span id="ccLabText">Personal lab +10 (off)</span></label></div>
+    <label class="cc-field" for="ccCraftItem">Select a recipe
+      <select class="cc-picker" id="ccCraftItem"><option value="">Choose a recipe...</option></select>
+    </label>
+    <p class="cc-muted" id="ccSelectedRecipe">Choose any recipe to begin.</p>
+    <div class="cc-cauldron-stage">
+      <button type="button" id="ccCauldron" class="cc-cauldron" aria-label="Stir the cauldron and begin crafting">
+        <span class="cc-pot-handle" aria-hidden="true"></span>
+        <span class="cc-pot-body" aria-hidden="true"></span>
+        <span class="cc-pot-rim" aria-hidden="true"></span>
+        <span class="cc-spoon" aria-hidden="true"></span>
+        <span class="cc-steam" aria-hidden="true">♨</span><span class="cc-steam two" aria-hidden="true">♨</span><span class="cc-steam three" aria-hidden="true">♨</span>
+        <span class="cc-bubble" style="--x:38%;--s:15px;--t:.1s" aria-hidden="true"></span>
+        <span class="cc-bubble" style="--x:60%;--s:12px;--t:.5s" aria-hidden="true"></span>
+        <span class="cc-bubble" style="--x:49%;--s:20px;--t:.9s" aria-hidden="true"></span>
+        <span class="cc-pot-label" aria-hidden="true">TAP TO STIR ⚗</span>
+      </button>
+    </div>
+    <p id="ccCraftQuestion" class="cc-question">Select a recipe and begin crafting.</p>
+    <div class="cc-roll-actions">
+      <button id="ccStart" class="gold-btn" type="button">⚗ Begin Brewing</button>
+      <button id="ccArcanaRoll" class="gold-btn" type="button" hidden>🎲 Yes · Roll Arcana</button>
+      <button id="ccMedicineRoll" class="gold-btn" type="button" hidden>🎲 Yes · Roll Medicine</button>
+      <button id="ccFinish" class="primary-btn" type="button" hidden>✦ View Outcome</button>
+    </div>
+    <div class="cc-result" id="ccSelectedResult" aria-live="polite"></div>
+    <p class="cc-notice" id="ccNotice" aria-live="polite"></p>
+    <p class="cc-muted">Custom milestones: DC 30 = half cost &amp; half time · DC 40 = 2 items · DC 50 = Masterwork (DM-defined). Below DC 30: consult your DM.</p>
+  </section>
+</section>
+<section class="tab-pane tab-hidden" data-tab-panel="inventory" id="tab-inventory" role="tabpanel">
+  <section class="panel cc-head">
+    <div class="cc-eyebrow">VANTYR'S PERSONAL SATCHEL</div>
+    <div class="cc-cauldron-header"><div><h3>🎒 Inventory</h3><p class="cc-inventory-guide">Manage all concoctions and other items, including custom Masterwork descriptions from your DM. This bag saves locally on this browser/device.</p></div>
+    <button class="gold-btn" id="ccAddManual" type="button">+ Item</button></div>
+    <div class="cc-statline"><strong id="ccBagCount">0 items</strong></div>
+    <div class="cc-bag-list" id="ccBagList"></div>
+  </section>
+</section>
+<div class="cc-overlay" id="ccFinishDialog" role="presentation" hidden>
+  <section class="cc-dialog" role="dialog" aria-modal="true" aria-labelledby="ccFinishDialogTitle">
+    <div class="cc-eyebrow">BREW COMPLETE</div><h3 id="ccFinishDialogTitle">Crafting Result</h3>
+    <p id="ccFinishSummary"></p>
+    <label class="cc-field">Quantity to store<input id="ccFinishQty" type="number" min="1" max="9999" value="1"/></label>
+    <label class="cc-switch"><input id="ccFinishMasterwork" type="checkbox"/> Mark as Masterwork</label>
+    <label class="cc-field">DM effect or notes (optional)<textarea id="ccFinishDmNote" placeholder="Your DM can define Masterwork properties here..."></textarea></label>
+    <div class="cc-dialog-footer"><button class="gold-btn" id="ccFinishAdd" type="button">Add to Inventory</button><button class="ghost-btn" id="ccFinishClose" type="button">Not now</button></div>
+  </section>
+</div>
+<div class="cc-overlay" id="ccEditDialog" role="presentation" hidden>
+  <section class="cc-dialog" role="dialog" aria-modal="true" aria-labelledby="ccEditTitle">
+    <div class="cc-eyebrow">INVENTORY RECORD</div><h3 id="ccEditTitle">Edit item</h3>
+    <form id="ccEditForm">
+      <input type="hidden" id="ccEditIndex"/>
+      <label class="cc-field">Item name<input id="ccEditName" type="text" maxlength="180" required/></label>
+      <label class="cc-field">Effect<textarea id="ccEditEffect" maxlength="4000"></textarea></label>
+      <label class="cc-field">Quantity<input id="ccEditQuantity" type="number" min="1" max="9999" value="1" required/></label>
+      <label class="cc-field">DM / Custom Masterwork effect<textarea id="ccEditNote" maxlength="4000"></textarea></label>
+      <label class="cc-switch"><input id="ccEditMasterwork" type="checkbox"/> Masterwork</label>
+      <div class="cc-dialog-footer"><button class="gold-btn" type="submit">Save Item</button><button class="ghost-btn" id="ccEditCancel" type="button">Cancel</button></div>
+    </form>
+  </section>
+</div>
+<section class="tab-pane tab-hidden" data-layout-zone="character-sections" data-tab-panel="character" id="tab-character" role="tabpanel"><details class="vecna-panel foldout" data-vecna-area=""><summary><span class="vecna-sigil">◉</span><span><strong>THE HAND &amp; EYE OF VECNA</strong><small>Legendary artifacts · 8 + 8 charges · spell DC 18</small></span><span class="vecna-quick" data-vecna-totals="">Eye 8/8 · Hand 8/8</span></summary><div class="vecna-reveal"><img alt="The Hand and Eye of Vecna" class="vecna-art" src="assets/hand-eye-vecna.jpg"/><div class="vecna-magic">✧ THE WHISPERED ONE ✧</div></div><div class="vecna-app" data-vecna-root=""></div></details><div class="quick-grid" data-layout-zone="quick-stats" id="quickStats"></div><div class="columns" id="abilitiesSection"><section class="panel"><div class="section-head"><h3>ABILITY SCORES</h3><span class="hint">Editable · Active form</span></div><div class="ability-grid" data-layout-zone="ability-scores" id="abilities"></div></section></div><section class="panel"><div class="section-head"><h3>FEATS &amp; FIGHTING STYLE</h3></div><div class="chips"><span>Alert</span><span>Tough</span><span>Crossbow Expert</span><span>Archery (+2, already included in +18)</span></div></section><details class="one-true-race foldout" id="futureDevilLore"><summary><span class="blood-race-icon">◈</span><span><strong>CONTRACT OF THE FUTURE DEVIL</strong><small>Legendary Feat · bound devil · Foresight and probability</small></span></summary><div class="vampire-reference"><article class="vampire-entry"><h4>Contract of the Future Devil</h4><p>A devil inhabits part of Vantyr's mind, seeing significant futures and bending their outcome. Intelligence 16+ prerequisite. Binding contract, removable only by divine intervention, Wish, or a party's death.</p><h4>Absolute Foresight</h4><p>Cannot be surprised while conscious. Intelligence modifier and Advantage on Initiative are already included in Stand by the Emperor; initiative stays +25.</p><h4>One Step Ahead</h4><p>Gains a d6 at combat start and each Vantyr turn, saving unused dice. Spend d6 to add or subtract from attack rolls, ability checks, saving throws or a creature's AC until end of turn.</p><h4>Future Is Set</h4><p>Once per Long Rest when rolling Initiative: Advantage on attacks, ability checks and saves; incoming attacks against you have disadvantage. Once per round when an enemy misses, move your speed without provoking opportunity attacks. Ends if incapacitated.</p><h4>Foreseen Outcome</h4><p>Reaction when a creature within 60 ft attacks, checks or saves: Absolute Failure (3/LR, 10 HP), Absolute Success (3/LR, 10 HP, not a crit), or Weighted Probability (unlimited, 30 HP, impose Advantage or Disadvantage). All costs include the Price of Knowing once, bypass Temp HP and resistance. Dropping to 0 from these costs leaves you at 1 HP and +1 Exhaustion.</p></article></div></details><details class="one-true-race foldout" id="oneTrueRace"><summary><span class="blood-race-icon">🦇</span> <span><strong>THE ONE TRUE VAMPIRE</strong><small>Racial powers · roleplay lore · restrictions · unlocks</small></span></summary>
 <div class="vampire-reference">
 <article class="vampire-entry"><h4>Cursed Traits of the Emperor</h4><p><b>Revulsion to the Sacred:</b> Vantyr instinctively recoils from radiant magic and holy places. He cannot activate Emperor's Time unless he has been invited into the place or dwelling he occupies (your DM's racial restriction).</p><p><b>Loathing the Light:</b> movement speed −10 ft in bright light; +10 ft in dim light or darkness.</p><p><b>Dreamless Hunger:</b> can consume or draw strength from dreams. No numerical benefit was specified on the character sheet.</p></article>
 <article class="vampire-entry"><h4>Stake to the Heart</h4><p>A piercing weapon driven into Vantyr's heart (DM's called-shot discretion) paralyzes him until the end of his next turn.</p></article>
@@ -145,7 +227,7 @@
 <section aria-label="Campaign exhaustion tracker" class="exhaustion-panel panel" id="exhaustionPanel">
 <div class="exhaustion-left"><div class="eyebrow">HOMEBREW · INDEPENDENT STATUS</div><h3>☠ EXHAUSTION <span id="exhaustionLevel">0 / 6</span></h3><div class="exhaustion-pips" id="exhaustionPips"></div><p class="hint" id="exhaustionEffect">No exhaustion penalties.</p></div>
 <div class="exhaustion-buttons"><button aria-label="Remove one exhaustion level" class="ghost-btn" id="exhaustionMinus">− Level</button><button aria-label="Add one exhaustion level" class="gold-btn" id="exhaustionPlus">+ Level</button></div>
-</section><footer>VANTYR — Blood Codex v2.8 · Saved locally · Open index.html in Chrome · Dev Mode layout controls</footer>
+</section><footer>VANTYR — Blood Codex v3.1 · Saved locally · Open index.html in Chrome · Dev Mode layout controls</footer>
 </div><div aria-hidden="true" class="roll-modal" hidden="" id="rollModal"><div aria-labelledby="modalHeading" aria-modal="true" class="roll-modal-card" role="dialog" tabindex="-1"><button aria-label="Close result" class="roll-modal-close" id="modalClose" type="button">×</button><div class="modal-eyebrow">VANTYR · BLOOD CODEX</div><h2 id="modalHeading">Roll result</h2><div class="modal-equation" id="modalEquation"></div><div class="modal-dice" id="modalDice"></div><p class="modal-description" id="modalDescription"></p><div class="modal-footnote">Click outside the card to close</div></div></div><div aria-hidden="true" class="future-choice-overlay" hidden="" id="futureSetDialog" role="presentation">
 <section aria-describedby="futureChoiceDescription" aria-labelledby="futureChoiceTitle" aria-modal="true" class="future-choice-dialog" role="dialog">
 <div aria-hidden="true" class="future-choice-sigil">◈</div>
