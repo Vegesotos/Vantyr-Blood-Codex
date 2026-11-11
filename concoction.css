@@ -96,3 +96,12 @@
 @media(prefers-reduced-motion:reduce){
   .cc-cauldron *,.cc-cauldron{animation:none!important;transition:none!important}
 }
+
+.cc-craft-summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;font:700 clamp(16px,2vw,21px) Georgia,serif;color:#ffe1b5;padding:5px 2px}
+.cc-craft-summary::-webkit-details-marker{display:none}
+.cc-craft-summary span{font:600 12px system-ui;color:#dfaabc;text-align:right}
+.cc-cauldron-panel[open]>.cc-craft-summary{border-bottom:1px solid #7b4054;padding-bottom:13px;margin-bottom:13px}
+.cc-cauldron-panel[open]>.cc-craft-summary span{font-size:0}
+.cc-cauldron-panel[open]>.cc-craft-summary span:after{content:'▴ Close brewing station';font-size:12px}
+.cc-catalogue{padding:13px!important}
+@media(max-width:760px){.cc-craft-summary{font-size:17px}.cc-craft-summary span{font-size:10px}}
