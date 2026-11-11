@@ -1,0 +1,25 @@
+name: VANTYR Web Preview
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish downloadable web app
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vantyr-Blood-Codex-web-preview
+          path: |
+            index.html
+            *.js
+            *.css
+            manifest.webmanifest
+            assets/**
+          if-no-files-found: error

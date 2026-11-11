@@ -1,48 +1,33 @@
-# VANTYR Blood Codex
+# VANTYR — Blood Codex
 
-Private Android character helper for Vantyr (Blood Hunter / Vampire). Source code is HTML, CSS and JavaScript embedded in an Android WebView.
+**Mobile web edition v3.0**, the private D&D character companion for Vantyr.
 
-## Initial project upload
+## Open the application
 
-The repository currently includes the Android APK build workflow. To put the app source here, use the **existing Android Studio project folder** that has already built successfully:
+This repository contains the complete web source in its root:
 
-1. Open that project in Android Studio.
-2. From the project's root directory, open the Terminal panel.
-3. Run:
-   ```bash
-   git init
-   git remote add origin https://github.com/Vegesotos/Vantyr-Blood-Codex.git
-   git fetch origin
-   git checkout -b main --track origin/main
-   git add app build.gradle settings.gradle gradle.properties
-   git commit -m "Add Vantyr Android app v3.0"
-   git push origin main
-   ```
-   If the checkout reports untracked-file conflicts, use the safer alternative in the instructions below rather than forcing or deleting files.
+- `index.html` — the app
+- `style.css`, `mobile.css` — styling
+- `app.js`, `curses.js`, `future.js`, `ascendants.js`, `spells.js`, `racial.js`, `vecna.js`, `layout.js`, `mobile.js` — mechanics and interface
+- `assets/` — portrait, Vecna illustration, app icons
+- `manifest.webmanifest` and `sw.js` — install/offline support
 
-### Safer upload using a fresh clone
+To run it on your PC now: **Code → Download ZIP**, extract it, and open `index.html` in a browser.
 
-If you prefer not to alter the project folder, from a terminal outside that folder run:
-```bash
-git clone https://github.com/Vegesotos/Vantyr-Blood-Codex.git
-```
-Copy the project's `app/`, `build.gradle`, `settings.gradle` and `gradle.properties` into the new `Vantyr-Blood-Codex` clone, keeping the existing `.github/`, `.gitignore`, and this README. Then run inside the clone:
-```bash
-git add .
-git commit -m "Add Vantyr Android app v3.0"
-git push origin main
-```
+All changes to these files can be reviewed via the GitHub **Commits** tab and **Files changed** views.
 
-## Automated APK builds
+## Web preview builds
 
-The workflow in `.github/workflows/build-apk.yml` runs on pushes to `main`, or manually in **Actions → Build VANTYR Android APK → Run workflow**.
+Every push to `main` produces a downloadable web preview package under **Actions → Web Preview → latest successful run → Artifacts**. Extract the artifact and open `index.html`.
 
-When the build finishes, open the workflow run and download the `Vantyr-Blood-Codex-debug-APK` artifact ZIP. Extract `app-debug.apk` and install it on Android. A debug APK is for personal testing; public distribution requires a separately signed release build.
+This repository is **private**. GitHub's repository file viewer is not a live website. Publishing a permanent web URL would require configuring hosting (and GitHub Pages availability for private repositories depends on your GitHub plan). Keep the repo private unless you explicitly choose otherwise.
 
-## Updating in Android Studio
+## Android later
 
-Use Git **Pull** to receive future source changes, then rebuild the APK or use the downloaded GitHub Actions build. APK installation is a separate step from source code updates.
+The Android Studio packaging is not part of this web-only upload. We can add it when you're ready.
 
-## Save data
+## Saves and backups
 
-Character progress is stored locally in the app; it is not synchronized through GitHub. Back up your phone's app data before uninstalling/reinstalling or changing the package identifier.
+Game state uses local browser storage. GitHub stores **source code**, not live character saves. Switching devices/browsers or clearing app storage does not transfer your character progress.
+
+The portrait has been compressed for web performance; no character identity/artwork was substituted.
