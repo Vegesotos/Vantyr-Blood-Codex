@@ -155,7 +155,7 @@
     const item=getRecipe(active);if(!item)return;
     const entry={...item,masterwork:$('ccFinishMasterwork').checked,note:$('ccFinishDmNote').value.trim()};
     bagAdd(entry,clamp($('ccFinishQty').value,1,9999));
-    $('ccFinishDialog').hidden=true;
+    $('ccFinishDialog').hidden=true;selectRecipe(active);
   }
   function wire(){
     initFilters();renderRecipes();renderInventory();syncLab();
@@ -179,7 +179,7 @@
       if(action==='edit')editBag(i);
       if(action==='plus')save.inventory[i].quantity=clamp(Number(save.inventory[i].quantity)+1,1,9999);
       if(action==='minus'){save.inventory[i].quantity--;if(save.inventory[i].quantity<=0)save.inventory.splice(i,1)}
-      if(action==='remove'&&window.confirm('Remove '+save.inventory[i].name+' from inventory?'))save.inventory.splice(i,1);
+      if(action==='remove'){if(b.dataset.confirmRemove==='yes')save.inventory.splice(i,1);else{b.dataset.confirmRemove='yes';b.textContent='Confirm remove';b.focus();return;}}
       persist();renderInventory();
     });
     $('ccAddManual').addEventListener('click',newBag);
