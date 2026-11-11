@@ -137,14 +137,13 @@
   function medicine(){
     if(step!=='medicine'||!rolls)return;
     rolls.m=r20();rolls.total=rolls.a+10-rolls.exhaustion+rolls.m+5-rolls.exhaustion+(rolls.lab?10:0);
-    step='result';craftingSummary();animateCauldron();
-    $('ccFinish').focus();
+    step='result';craftingSummary();animateCauldron();finish();
   }
   function finish(){
     if(!rolls||rolls.m===null)return;
     const item=getRecipe(active);
     $('ccFinishDialogTitle').textContent=rolls.total>=50?'✦ MASTERWORK RESULT':rolls.total>=40?'✦ TWO CONCOCTIONS':rolls.total>=30?'✦ CRAFTING SUCCESS':'CRAFTING OUTCOME · DM CHECK';
-    $('ccFinishSummary').textContent=item.name+' — '+tierDesc(rolls.total);
+    $('ccFinishSummary').textContent=item.name+' — '+tierDesc(rolls.total)+' Effect: '+item.effect+' Total '+rolls.total+' (Arcana '+(rolls.a+10-rolls.exhaustion)+' + Medicine '+(rolls.m+5-rolls.exhaustion)+' + Lab '+(rolls.lab?10:0)+').';
     $('ccFinishQty').value=rolls.total>=40&&rolls.total<50?'2':'1';
     $('ccFinishMasterwork').checked=rolls.total>=50;
     $('ccFinishDmNote').value='';
