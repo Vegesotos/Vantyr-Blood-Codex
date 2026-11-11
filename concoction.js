@@ -96,6 +96,13 @@
     $('ccEditQuantity').value=1;$('ccEditMasterwork').checked=false;
     $('ccEditDialog').hidden=false;$('ccEditName').focus();
   }
+  function filterCraftSelect(){
+    const q=($('ccCraftFind')?.value||'').trim().toLowerCase();
+    const selected=active===null?'':String(active);
+    const filtered=RECIPES.map((item,i)=>({item,i})).filter(({item,i})=>!q||(item.name+' '+item.kit+' '+item.effect).toLowerCase().includes(q)||String(i)===selected);
+    $('ccCraftItem').innerHTML='<option value="">Choose a recipe...</option>'+filtered.map(({item,i})=>'<option value="'+i+'">'+h(item.name)+' · '+h(item.kit)+'</option>').join('');
+    $('ccCraftItem').value=selected;
+  }
   function craftingSummary(){
     const item=getRecipe(active);
     if(item){$('ccSelectedRecipe').textContent=item.name+' · '+item.kit+' · '+item.rarity+' (Book DC '+item.dc+')';}
@@ -118,7 +125,7 @@
     active=Number(idx);rolls=null;step='select';craftingSummary();
   }
   function openCraft(idx){
-    selectRecipe(idx);
+    $('ccCraftFind').value='';filterCraftSelect();selectRecipe(idx);
     if(!document.querySelector('.tab-btn[data-tab="concoction"]')?.classList.contains('active'))document.querySelector('.tab-btn[data-tab="concoction"]')?.click();
     $('ccCauldronPanel').open=true;
     $('ccCauldronPanel')?.scrollIntoView({behavior:'smooth',block:'start'});
@@ -162,9 +169,10 @@
     $('ccLab').addEventListener('change',e=>{save.lab=e.target.checked;persist();syncLab();craftingSummary()});
     $('ccMute').checked=!!save.mute;
     $('ccMute').addEventListener('change',e=>{save.mute=e.target.checked;persist()});
-    $('ccCraftItem').innerHTML='<option value="">Choose a recipe...</option>'+RECIPES.map((item,i)=>'<option value="'+i+'">'+h(item.name)+' · '+h(item.kit)+'</option>').join('');
+    filterCraftSelect();
+    $('ccCraftFind').addEventListener('input',filterCraftSelect);
     $('ccCraftItem').addEventListener('change',e=>{if(e.target.value===''){active=null;rolls=null;step='select';craftingSummary()}else selectRecipe(e.target.value)});
-    $('ccCauldron').addEventListener('click',()=>{animateCauldron();if(active===null){$('ccCraftItem').focus();return}if(step==='select')start()});
+    $('ccCauldron').addEventListener('click',()=>{animateCauldron();if(active===null){$('ccCraftFind').focus();return}if(step==='select')start()});
     $('ccStart').addEventListener('click',start);
     $('ccArcanaRoll').addEventListener('click',arcana);
     $('ccMedicineRoll').addEventListener('click',medicine);
