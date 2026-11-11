@@ -1,0 +1,36 @@
+name: Test Concoction Mobile Flow
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test runner
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Launch static test server
+        run: |
+          python3 -m http.server 8765 >/tmp/vantyr-web.log 2>&1 &
+          sleep 2
+      - name: Test mobile crafting and inventory
+        run: node scripts/smoke-concoctions.mjs
+      - name: Upload mobile screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Concoction-mobile-browser-check
+          path: concoction-mobile-smoke.png
+          if-no-files-found: ignore
