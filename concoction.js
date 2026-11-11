@@ -119,7 +119,7 @@
   }
   function openCraft(idx){
     selectRecipe(idx);
-    document.querySelector('.tab-btn[data-tab="concoction"]')?.click();
+    if(!document.querySelector('.tab-btn[data-tab="concoction"]')?.classList.contains('active'))document.querySelector('.tab-btn[data-tab="concoction"]')?.click();
     $('ccCauldronPanel')?.scrollIntoView({behavior:'smooth',block:'start'});
     $('ccStart').focus();
   }
