@@ -11,7 +11,7 @@
   const tiers=['Common','Uncommon','Rare','Very Rare'];
   let save={lab:false,mute:false,inventory:[]};
   try{const v=JSON.parse(localStorage.getItem(KEY)||'null');if(v&&typeof v==='object')save={...save,...v,inventory:Array.isArray(v.inventory)?v.inventory:[]};}catch(e){}
-  let category=kits[0],rarity='All',search='',active=null,step='select',rolls=null;
+  let category='All',rarity='All',search='',active=null,step='select',rolls=null;
   const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(save))}catch(e){console.warn('Concoction storage unavailable',e)}};
   const getRecipe=id=>RECIPES[Number(id)]||null;
   const dcName=total=>total>=50?'Masterwork':total>=40?'Double Yield':total>=30?'Efficient Creation':'Below Enhanced Threshold';
