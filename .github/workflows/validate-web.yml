@@ -1,0 +1,23 @@
+name: Validate VANTYR Web App
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate syntax of every JavaScript file
+        run: |
+          for file in *.js; do node --check "$file"; done
+      - name: Validate crafting catalogue and navigation
+        run: node scripts/validate-web.mjs
