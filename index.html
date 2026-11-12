@@ -5,7 +5,7 @@
 <meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="#120e17" name="theme-color"/><title>Vantyr | Character Helper</title>
 <link href="style.css" rel="stylesheet"/><script defer="" src="ascendants.js"></script><script defer="" src="app.js"></script><script defer="" src="curses.js"></script>
-<script defer="" src="layout.js"></script><script defer="" src="spells.js"></script><script defer="" src="racial.js"></script><script defer="" src="vecna.js"></script><script defer="" src="future.js"></script><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="yes" name="mobile-web-app-capable"/><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/><link href="manifest.webmanifest" rel="manifest"/><link href="mobile.css" rel="stylesheet"/><script defer="" src="mobile.js"></script><link href="concoction.css" rel="stylesheet"/><script defer="" src="concoction-data.js"></script><script defer="" src="concoction.js"></script><link href="observer-ui.css" rel="stylesheet"/><script defer src="observer-config.js"></script><script defer src="observer-sync.js"></script></head>
+<script defer="" src="layout.js"></script><script defer="" src="spells.js"></script><script defer="" src="racial.js"></script><script defer="" src="vecna.js"></script><script defer="" src="future.js"></script><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="yes" name="mobile-web-app-capable"/><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/><link href="manifest.webmanifest" rel="manifest"/><link href="mobile.css" rel="stylesheet"/><script defer="" src="mobile.js"></script><link href="concoction.css" rel="stylesheet"/><script defer="" src="concoction-data.js"></script><script defer="" src="concoction.js"></script><link href="observer-ui.css" rel="stylesheet"/><script defer src="observer-config.js"></script><script defer src="observer-sync.js"></script><link href="initiative-share.css" rel="stylesheet"/><script defer src="initiative-share.js"></script></head>
 <body><div class="app-shell" id="app">
 <header class="topbar"><div class="brand"><span class="crest">♛</span><div><div class="eyebrow">THE VAMPIRE LORD</div><h1>VANTYR <span class="muted">/ CHARACTER HELPER</span></h1></div></div><div class="top-actions"><span class="small-label" id="saveStatus">Saved locally</span><button type="button" id="observerSettingsBtn" class="ghost-btn observer-launch" title="DM live observer sync">◉ DM Sync</button><button class="ghost-btn" id="resetBtn">Reset values</button><button aria-pressed="false" class="developer-toggle" id="developerModeBtn" title="Enable grid editing and drag cards into position" type="button">⚙ Dev Mode</button></div></header><section class="hero panel">
 <div class="hero-identity">
@@ -276,4 +276,21 @@
  <div class="observer-buttons"><button type="button" id="observerSignOut" class="ghost-btn">Sign Out on This Device</button></div>
 </div>
 <p class="hint">Sync is optional. Vantyr's normal offline HP tracker and other mechanics continue working if the internet is unavailable.</p>
-</section></div></body></html>
+</section></div><div class="emperor-overlay" id="emperorShareDialog" hidden>
+  <section class="emperor-share-panel" role="dialog" aria-modal="true" aria-labelledby="emperorShareTitle">
+    <span class="eyebrow">THE VAMPIRE LORD · STAND BY THE EMPEROR</span>
+    <h2 id="emperorShareTitle">♛ Choose Your Initiative</h2>
+    <p>Advantage gives you two d20 rolls. Tap which die Vantyr keeps. Each total already includes your +25 initiative modifier (and any Exhaustion penalty).</p>
+    <div id="emperorDice" class="emperor-dice-grid"></div>
+    <button type="button" id="emperorShareToggle" class="emperor-gift-toggle" aria-pressed="false">＋ Give the other initiative to an ally</button>
+    <div id="emperorGiftArea" class="emperor-gift-area" hidden>
+      <label>CHOOSE AN ALLY
+        <select id="emperorAlly"><option value="">Choose who gets the other die…</option></select>
+      </label>
+    </div>
+    <p id="emperorGiftExplanation">Vantyr keeps your selected die. Sharing is optional.</p>
+    <p id="emperorShareError" class="emperor-share-error" role="alert"></p>
+    <button id="emperorShareConfirm" type="button" class="emperor-confirm">♛ Confirm Initiatives</button>
+    <p class="hint">The DM Initiative Board receives your chosen values automatically when live sharing is connected. Your DM can manually adjust individual numbers there.</p>
+  </section>
+</div></body></html>
