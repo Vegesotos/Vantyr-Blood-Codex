@@ -19,7 +19,7 @@ function emit(ally=null){
  try{localStorage.setItem(KEY,JSON.stringify(detail))}catch(e){}
  document.dispatchEvent(new CustomEvent('vantyr:initiative-update',{detail}));
  $('initiativeResult').textContent=ally?
-   'Vantyr '+detail.vantyr+' · '+ally+' '+detail.allyInitiative+' · DM board notified':
+   'Vantyr '+detail.vantyr+' · '+ally+' '+detail.allyInitiative+' · saved locally; syncing when connected':
    'Vantyr '+detail.vantyr+' · higher roll retained · DM board notified';
  return detail;
 }
