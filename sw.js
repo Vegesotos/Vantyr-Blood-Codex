@@ -1,5 +1,5 @@
-const CACHE='vantyr-web-v3-3-mobile-codex';;
-const ASSETS=['./','index.html','style.css','mobile.css','concoction.css','mobile.js','concoction-data.js','concoction.js','app.js','ascendants.js','curses.js','layout.js','spells.js','racial.js','vecna.js','future.js','assets/vantyr-portrait.jpg','assets/hand-eye-vecna.jpg','assets/icon-192.png','assets/icon-512.png'];
+const CACHE='vantyr-web-v3-4-dm-observer';
+const ASSETS=['./','index.html','style.css','mobile.css','concoction.css','observer-ui.css','observer-config.js','observer-sync.js','mobile.js','concoction-data.js','concoction.js','app.js','ascendants.js','curses.js','layout.js','spells.js','racial.js','vecna.js','future.js','assets/vantyr-portrait.jpg','assets/hand-eye-vecna.jpg','assets/icon-192.png','assets/icon-512.png','dm/index.html','dm/dm.js','dm/dm.css'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{
