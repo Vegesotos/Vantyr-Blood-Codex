@@ -7,9 +7,11 @@
   const clamp=(v,min,max)=>Math.max(min,Math.min(max,Number(v)||0));
   const $=id=>document.getElementById(id);
   const r20=()=>Math.floor(Math.random()*20)+1;
+  const rollCheck=mode=>{const dice=[r20()];if(mode!=='normal')dice.push(r20());return {dice,mode,value:mode==='adv'?Math.max(...dice):mode==='dis'?Math.min(...dice):dice[0]}};
+  const getRollMode=()=>document.querySelector('input[name="ccRollMode"]:checked')?.value||'normal';
   const kits=["Alchemist's Supplies","Herbalism Kit","Poisoner's Kit","Minor Potions"];
   const tiers=['Common','Uncommon','Rare','Very Rare'];
-  let save={lab:false,mute:false,inventory:[]};
+  let save={lab:false,mute:false,inventory:[],inspiration:0,inspirationMax:10};
   try{const v=JSON.parse(localStorage.getItem(KEY)||'null');if(v&&typeof v==='object')save={...save,...v,inventory:Array.isArray(v.inventory)?v.inventory:[]};}catch(e){}
   let category='All',rarity='All',search='',active=null,step='select',rolls=null;
   const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(save))}catch(e){console.warn('Concoction storage unavailable',e)}};
@@ -17,7 +19,11 @@
   const dcName=total=>total>=50?'Masterwork':total>=40?'Double Yield':total>=30?'Efficient Creation':'Below Enhanced Threshold';
   const tierDesc=total=>total>=50?'DC 50 · MASTERWORK. The DM determines the upgraded property.':total>=40?'DC 40 · DOUBLE YIELD. You create 2 copies of the selected item.':total>=30?'DC 30 · EFFICIENT CRAFT. 1 copy, at half the cost and half the time.':'Below DC 30. The normal crafting outcome is decided by your DM; no inventory item is added automatically.';
   const exhaustion=()=>typeof window.exhaustionLevel==='function'?window.exhaustionLevel():(typeof exhaustionLevel==='function'?exhaustionLevel():0);
-  const rollMarkup=(roll,bonus,penalty)=>'<strong>'+roll+'</strong> '+(bonus>=0?'+ ':'− ')+Math.abs(bonus)+(penalty?' − '+penalty+' exhaustion':'')+' = <b>'+(roll+bonus-penalty)+'</b>';
+  const rollMarkup=(roll,bonus,penalty)=>{
+    const selected=typeof roll==='number'?roll:roll.value;
+    const raw=typeof roll==='number'?String(roll):roll.dice.join(' / ')+(roll.mode==='adv'?' (Advantage → '+selected+')':roll.mode==='dis'?' (Disadvantage → '+selected+')':'');
+    return '<strong>'+raw+'</strong> + '+bonus+(penalty?' − '+penalty+' exhaustion':'')+' = <b>'+(selected+bonus-penalty)+'</b>';
+  };
   let ctx=null;
   function sound(){
     if(save.mute)return;
@@ -47,16 +53,34 @@
     $('ccLab').checked=!!save.lab;
     $('ccLabText').textContent=save.lab?'+10 Lab bonus ACTIVE':'Personal lab +10 (off)';
   }
+  const getMatches=q=>RECIPES.map((item,i)=>({...item,i})).filter(x=>(x.name+' '+x.effect+' '+x.kit+' '+x.rarity).toLowerCase().includes(q.toLowerCase()));
+  function suggestions(inputId,boxId,mode){
+    const input=$(inputId),box=$(boxId),q=input.value.trim();
+    if(!q){box.hidden=true;box.innerHTML='';return;}
+    const found=getMatches(q).sort((a,b)=>Number(b.name.toLowerCase().startsWith(q.toLowerCase()))-Number(a.name.toLowerCase().startsWith(q.toLowerCase()))).slice(0,8);
+    box.innerHTML=found.length?found.map(x=>'<button type="button" role="option" class="cc-suggestion" data-suggest="'+x.i+'"><b>'+h(x.name)+'</b><small>'+h(x.kit)+' · '+h(x.rarity)+'</small></button>').join(''):'<p>No suggestions found</p>';
+    box.hidden=false;
+  }
   function recipeLines(list){
     return list.map(item=>{
       const i=RECIPES.indexOf(item);
-      return '<article class="cc-recipe"><div class="cc-recipe-head"><h4>'+h(item.name)+'</h4><span class="cc-dc">Craft DC '+item.dc+'</span></div><p>'+h(item.effect)+'</p><div class="cc-tags"><span>'+h(item.kit)+'</span><span>'+h(item.rarity)+'</span></div><div class="cc-actions"><button type="button" class="ghost-btn cc-craft" data-recipe="'+i+'">⚗ Craft</button></div></article>';
+      return '<article class="cc-recipe"><div class="cc-recipe-head"><h4>'+h(item.name)+'</h4><span class="cc-dc">Craft DC '+item.dc+'</span></div><div class="cc-actions"><button type="button" class="ghost-btn cc-craft" data-recipe="'+i+'">⚗ Craft</button><button type="button" class="ghost-btn" data-read="'+i+'" aria-expanded="false">📜 Read</button></div><div class="cc-recipe-details" id="ccRead-'+i+'" hidden><p>'+h(item.effect)+'</p><div class="cc-tags"><span>'+h(item.kit)+'</span><span>'+h(item.rarity)+'</span></div></div></article>';
     }).join('');
   }
   function renderRecipes(){
     const filtered=RECIPES.filter(x=>(category==='All'||x.kit===category)&&(rarity==='All'||x.rarity===rarity)&&(!search||(x.name+' '+x.effect+' '+x.kit).toLowerCase().includes(search)));
     $('ccResultCount').textContent=filtered.length+' recipes';
-    $('ccRecipes').innerHTML=filtered.length?recipeLines(filtered):'<p class="cc-empty">No matching recipes. Try another name or category.</p>';
+    const orderedKits=category==='All'?kits:[category];
+    $('ccRecipes').innerHTML=filtered.length?orderedKits.map(kit=>{
+      const group=filtered.filter(x=>x.kit===kit);if(!group.length)return '';
+      const rarities=kit==='Minor Potions'?['Minor']:tiers;
+      return '<details class="cc-kit-directory" '+(category!=='All'||search?'open':'')+'><summary>⚗ '+h(kit)+' <span>'+group.length+' recipes</span></summary>'+
+        rarities.map(t=>{
+          const sub=group.filter(x=>x.rarity===t);if(!sub.length)return '';
+          const dc=sub[0].dc;
+          return '<details class="cc-tier-directory" '+(rarity!=='All'||search?'open':'')+'><summary>'+h(t)+' <span>DC '+dc+' · '+sub.length+' items</span></summary><div class="cc-recipe-tiles">'+recipeLines(sub)+'</div></details>';
+        }).join('')+'</details>';
+    }).join(''):'<p class="cc-empty">No matching recipes. Try another name or category.</p>';
     document.querySelectorAll('[data-kit]').forEach(b=>b.classList.toggle('selected',b.dataset.kit===category));
     document.querySelectorAll('[data-rarity]').forEach(b=>b.classList.toggle('selected',b.dataset.rarity===rarity));
   }
@@ -65,14 +89,24 @@
     $('ccRarities').innerHTML=['All',...tiers,'Minor'].map(t=>'<button type="button" class="cc-filter" data-rarity="'+h(t)+'">'+h(t)+'</button>').join('');
     $('ccCategories').addEventListener('click',e=>{let b=e.target.closest('[data-kit]');if(b){category=b.dataset.kit;rarity='All';renderRecipes()}});
     $('ccRarities').addEventListener('click',e=>{let b=e.target.closest('[data-rarity]');if(b){rarity=b.dataset.rarity;renderRecipes()}});
-    $('ccSearch').addEventListener('input',e=>{search=e.target.value.trim().toLowerCase();renderRecipes()});
-    $('ccRecipes').addEventListener('click',e=>{const b=e.target.closest('[data-recipe]');if(b)openCraft(b.dataset.recipe)});
+    $('ccSearch').addEventListener('input',e=>{search=e.target.value.trim().toLowerCase();renderRecipes();suggestions('ccSearch','ccSuggestions','catalogue')});
+    $('ccRecipes').addEventListener('click',e=>{
+      const b=e.target.closest('[data-recipe]');if(b){openCraft(b.dataset.recipe);return;}
+      const read=e.target.closest('[data-read]');if(read){
+        const target=$('ccRead-'+read.dataset.read);if(target){target.hidden=!target.hidden;read.setAttribute('aria-expanded',String(!target.hidden));read.textContent=target.hidden?'📜 Read':'▴ Hide';}
+      }
+    });
+    $('ccSuggestions').addEventListener('click',e=>{
+      const b=e.target.closest('[data-suggest]');if(!b)return;const item=getRecipe(b.dataset.suggest);
+      $('ccSearch').value=item.name;search=item.name.toLowerCase();$('ccSuggestions').hidden=true;
+      category='All';rarity='All';renderRecipes();
+    });
   }
   function renderInventory(){
     const inv=$('ccBagList'),total=save.inventory.reduce((n,x)=>n+Math.max(0,Number(x.quantity)||0),0);
     $('ccBagCount').textContent=save.inventory.length+' entries · '+total+' items';
     if(!save.inventory.length){inv.innerHTML='<p class="cc-empty">Your potion bag is empty. Craft a recipe or add an item manually.</p>';return;}
-    inv.innerHTML=save.inventory.map((x,i)=>'<article class="cc-bag-item"><div class="cc-recipe-head"><h4>'+h(x.name)+'</h4><span class="cc-dc">×'+h(x.quantity)+'</span></div><div class="cc-tags"><span>'+h(x.kit||'Custom')+'</span><span>'+h(x.rarity||'Custom')+'</span>'+(x.masterwork?'<span>✦ Masterwork</span>':'')+'</div><p>'+h(x.effect)+'</p>'+(x.note?'<p class="cc-note">DM: '+h(x.note)+'</p>':'')+'<div class="cc-actions"><button type="button" class="ghost-btn" data-edit="'+i+'">Edit</button><button type="button" class="ghost-btn" data-minus="'+i+'">−1</button><button type="button" class="ghost-btn" data-plus="'+i+'">+1</button><button type="button" class="ghost-btn cc-danger" data-remove="'+i+'">Remove</button></div></article>').join('');
+    inv.innerHTML=save.inventory.map((x,i)=>'<details class="cc-bag-item"><summary><span>'+h(x.name)+'</span><span class="cc-dc">×'+h(x.quantity)+'</span></summary><div class="cc-bag-inner"><div class="cc-tags"><span>'+h(x.kit||'Custom')+'</span><span>'+h(x.rarity||'Custom')+'</span>'+(x.masterwork?'<span>✦ Masterwork</span>':'')+'</div><p>'+h(x.effect)+'</p>'+(x.note?'<p class="cc-note">DM: '+h(x.note)+'</p>':'')+'<div class="cc-actions"><button type="button" class="ghost-btn" data-edit="'+i+'">Edit</button><button type="button" class="ghost-btn" data-minus="'+i+'">−1</button><button type="button" class="ghost-btn" data-plus="'+i+'">+1</button><button type="button" class="ghost-btn cc-danger" data-remove="'+i+'">Remove</button></div></div></details>').join('');
   }
   function bagAdd(item,quantity=1){
     if(!item)return;
@@ -125,7 +159,7 @@
     active=Number(idx);rolls=null;step='select';craftingSummary();
   }
   function openCraft(idx){
-    $('ccCraftFind').value='';filterCraftSelect();selectRecipe(idx);
+    $('ccCraftFind').value='';$('ccCraftSuggestions').hidden=true;filterCraftSelect();selectRecipe(idx);
     if(!document.querySelector('.tab-btn[data-tab="concoction"]')?.classList.contains('active'))document.querySelector('.tab-btn[data-tab="concoction"]')?.click();
     $('ccCauldronPanel').open=true;
     $('ccCauldronPanel')?.scrollIntoView({behavior:'smooth',block:'start'});
@@ -138,20 +172,20 @@
   }
   function arcana(){
     if(step!=='arcana')return;
-    rolls={a:r20(),m:null,exhaustion:clamp(exhaustion(),0,6),lab:!!save.lab,total:null};
+    rolls={a:rollCheck(getRollMode()),m:null,exhaustion:clamp(exhaustion(),0,6),lab:!!save.lab,total:null};
     step='medicine';craftingSummary();animateCauldron();
     $('ccMedicineRoll').focus();
   }
   function medicine(){
     if(step!=='medicine'||!rolls)return;
-    rolls.m=r20();rolls.total=rolls.a+10-rolls.exhaustion+rolls.m+5-rolls.exhaustion+(rolls.lab?10:0);
+    rolls.m=rollCheck(getRollMode());rolls.total=rolls.a.value+10-rolls.exhaustion+rolls.m.value+5-rolls.exhaustion+(rolls.lab?10:0);
     step='result';craftingSummary();animateCauldron();finish();
   }
   function finish(){
     if(!rolls||rolls.m===null)return;
     const item=getRecipe(active);
     $('ccFinishDialogTitle').textContent=rolls.total>=50?'✦ MASTERWORK RESULT':rolls.total>=40?'✦ TWO CONCOCTIONS':rolls.total>=30?'✦ CRAFTING SUCCESS':'CRAFTING OUTCOME · DM CHECK';
-    $('ccFinishSummary').textContent=item.name+' — '+tierDesc(rolls.total)+' Effect: '+item.effect+' Total '+rolls.total+' (Arcana '+(rolls.a+10-rolls.exhaustion)+' + Medicine '+(rolls.m+5-rolls.exhaustion)+' + Lab '+(rolls.lab?10:0)+').';
+    $('ccFinishSummary').textContent=item.name+' — '+tierDesc(rolls.total)+' Effect: '+item.effect+' Total '+rolls.total+' (Arcana '+(rolls.a.value+10-rolls.exhaustion)+' + Medicine '+(rolls.m.value+5-rolls.exhaustion)+' + Lab '+(rolls.lab?10:0)+').';
     $('ccFinishQty').value=rolls.total>=40&&rolls.total<50?'2':'1';
     $('ccFinishMasterwork').checked=rolls.total>=50;
     $('ccFinishDmNote').value='';
@@ -170,15 +204,20 @@
     $('ccMute').checked=!!save.mute;
     $('ccMute').addEventListener('change',e=>{save.mute=e.target.checked;persist()});
     filterCraftSelect();
-    $('ccCraftFind').addEventListener('input',filterCraftSelect);
-    $('ccCraftItem').addEventListener('change',e=>{if(e.target.value===''){active=null;rolls=null;step='select';craftingSummary()}else selectRecipe(e.target.value)});
+    $('ccCraftFind').addEventListener('input',()=>{filterCraftSelect();suggestions('ccCraftFind','ccCraftSuggestions','cauldron')});
+    $('ccCraftSuggestions').addEventListener('click',e=>{
+      const b=e.target.closest('[data-suggest]');if(!b)return;
+      const item=getRecipe(b.dataset.suggest);$('ccCraftFind').value=item.name;
+      active=null;filterCraftSelect();selectRecipe(b.dataset.suggest);$('ccCraftSuggestions').hidden=true;
+    });
+    $('ccCraftItem').addEventListener('change',e=>{if(e.target.value===''){active=null;rolls=null;step='select';craftingSummary()}else {selectRecipe(e.target.value);$('ccCraftSuggestions').hidden=true}});
     $('ccCauldron').addEventListener('click',()=>{animateCauldron();if(active===null){$('ccCraftFind').focus();return}if(step==='select')start()});
     $('ccStart').addEventListener('click',start);
     $('ccArcanaRoll').addEventListener('click',arcana);
     $('ccMedicineRoll').addEventListener('click',medicine);
     $('ccFinish').addEventListener('click',finish);
     $('ccFinishAdd').addEventListener('click',onSaveCraft);
-    $('ccFinishClose').addEventListener('click',()=>{$('ccFinishDialog').hidden=true});
+    $('ccFinishClose').addEventListener('click',()=>{$('ccFinishDialog').hidden=true;if(active!==null)selectRecipe(active);$('ccStart').focus()});
     $('ccFinishDialog').addEventListener('click',e=>{if(e.target===$('ccFinishDialog'))$('ccFinishDialog').hidden=true});
     $('ccBagList').addEventListener('click',e=>{
       const b=e.target.closest('button');if(!b)return;
@@ -191,6 +230,12 @@
       persist();renderInventory();
     });
     $('ccAddManual').addEventListener('click',newBag);
+    $('ccBagOpen').addEventListener('click',()=>{
+      const bag=$('ccBagContents'),willOpen=bag.hidden;
+      bag.hidden=!willOpen;$('ccBagOpen').setAttribute('aria-expanded',String(willOpen));
+      $('ccBagOpen').classList.remove('cc-bag-sparkle');void $('ccBagOpen').offsetWidth;
+      if(willOpen){$('ccBagOpen').classList.add('cc-bag-sparkle');sound();renderInventory();}
+    });
     $('ccEditCancel').addEventListener('click',()=>{$('ccEditDialog').hidden=true});
     $('ccEditDialog').addEventListener('click',e=>{if(e.target===$('ccEditDialog'))$('ccEditDialog').hidden=true});
     $('ccEditForm').addEventListener('submit',e=>{
