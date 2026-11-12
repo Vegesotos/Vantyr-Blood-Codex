@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#180f18"/>
+<title>VANTYR · Dungeon Master's Observer</title>
+<link rel="stylesheet" href="dm.css"/>
+<script defer src="../observer-config.js"></script>
+<script defer src="dm.js"></script>
+</head>
+<body>
+<div class="dm-shell">
+<header class="dm-topbar"><div class="dm-brand"><div class="dm-mark">♛</div><div><span class="dm-eyebrow">THE VAMPIRE LORD</span><strong>VANTYR <small>/ OBSERVER</small></strong></div></div><span class="dm-readonly">◉ READ ONLY</span></header>
+<section id="dmGate" class="dm-gate dm-panel">
+  <div class="dm-gate-icon">🩸</div>
+  <h1>Dungeon Master's Observer</h1>
+  <p>Open the private invitation link sent by Vantyr's player. Your DM view needs no account or installation.</p>
+  <label>Private viewer code <input id="dmTokenField" type="password" placeholder="Paste your 64-character code" autocomplete="off" spellcheck="false"/></label>
+  <button id="dmConnect">Open Observer</button><p id="dmGateMessage" class="dm-error" aria-live="polite"></p>
+  <small>Only Vantyr's player can change resources. This screen is read-only.</small>
+</section>
+<main id="dmDashboard" hidden>
+  <section class="dm-identity dm-panel">
+    <div class="dm-avatar"><img src="../assets/vantyr-portrait.jpg" alt="Vantyr portrait"/></div>
+    <div class="dm-intro"><span class="dm-eyebrow">LEVEL 15 · BLOOD HUNTER · MUTANT ORDER</span><h1>VANTYR</h1><p id="dmForm">Normal Form</p></div>
+    <div class="dm-connection"><div id="dmConnection" class="dm-status">● CONNECTING</div><div id="dmUpdated">Waiting for first update</div></div>
+  </section>
+  <section class="dm-vitals dm-panel">
+    <div class="dm-vitals-title"><div><span class="dm-eyebrow">LIFE FORCE</span><h2>♥ HIT POINTS</h2></div><strong id="dmHp" class="dm-hp">—</strong></div>
+    <div class="dm-hp-track"><div id="dmHpFill"></div></div>
+    <div class="dm-metrics"><div><span>✦ TEMP HP</span><b id="dmTemp">—</b></div><div><span>⬡ ARMOR CLASS</span><b id="dmAc">—</b></div><div><span>☠ EXHAUSTION</span><b id="dmExhaustion">—</b></div><div><span>⚔ COMBAT TURN</span><b id="dmTurn">—</b></div></div>
+  </section>
+  <div class="dm-grid">
+    <section class="dm-panel dm-unit"><header><span>🩸</span><h2>BLOOD CURSES</h2></header><strong id="dmCurseCharges">—</strong><div class="dm-small">SHARED CHARGES</div><p id="dmCorrosion">Corrosion —</p><p id="dmOtherCurses">Squelching / Silence —</p></section>
+    <section class="dm-panel dm-unit"><header><span>◈</span><h2>FUTURE DEVIL</h2></header><strong id="dmForesight">—</strong><div class="dm-small">FORESIGHT DICE</div><p id="dmFutureSet">Future Is Set —</p><p id="dmOutcomeUses">Outcomes —</p></section>
+    <section class="dm-panel dm-unit"><header><span>✦</span><h2>CONSTELLATIONS</h2></header><strong id="dmStarshotCharges">—</strong><div class="dm-small">STARSHOT CHARGES</div><p id="dmConstellations">Balance / Flames / Rogue —</p><p id="dmParalysis">Madris' Fury —</p></section>
+    <section class="dm-panel dm-unit"><header><span>◉</span><h2>VECNA ARTIFACTS</h2></header><div id="dmVecnaCharges" class="dm-vecna-main">—</div><div class="dm-small">HAND / EYE · 8 EACH</div><p id="dmWish">Wish —</p></section>
+  </div>
+  <details class="dm-panel dm-details" open><summary>✦ OATH FORMS <small>Vigor · Fury · Overdrive</small></summary><div class="dm-oaths" id="dmOaths"></div></details>
+  <details class="dm-panel dm-details"><summary>⚔ CRIMSON RITES &amp; ACTIVE CURSES <small>Tap to inspect</small></summary><div class="dm-detail-body"><h3>CRIMSON RITES</h3><div id="dmRites" class="dm-chips"></div><h3>ACTIVE BLOOD CURSES</h3><div id="dmEffects" class="dm-chips"></div><h3>BRAIN TUMOR</h3><p id="dmBrain">No stored damage</p></div></details>
+  <details class="dm-panel dm-details"><summary>📜 ABILITY REFERENCE <small>Tap to read</small></summary><div class="dm-detail-body dm-abilities">
+   <p><b>Crimson Vigor:</b> Crossbows gain +2 to attack/damage, Perception advantage, and reactive healing when HP is lost.</p>
+   <p><b>Crimson Fury:</b> Crossbow critical range 19–20, extra chosen 1d8 Hemocraft damage, temporary HP on activation.</p>
+   <p><b>Crimson Overdrive:</b> Additional 2d8 Hemocraft, +4 saving throws, Surge of Wrath and exhaustion backlash on ending.</p>
+   <p><b>Brutal Critical:</b> Maximize all damage dice once, then roll the dice once more; add flat bonuses only once.</p>
+   <p><b>Future Is Set:</b> When active, Vantyr has advantage on attacks, checks and saves; incoming attacks have disadvantage.</p>
+   <p><b>Starshot Crossbow:</b> Hand of Vecna adds 2d8 cold on hits. Constellations share three charges.</p>
+  </div></details>
+  <footer>VANTYR · DUNGEON MASTER'S OBSERVER · READ-ONLY STATUS · NO CONTROLS</footer>
+</main>
+</div>
+</body>
+</html>
