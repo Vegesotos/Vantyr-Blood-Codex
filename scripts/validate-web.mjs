@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const html=fs.readFileSync('index.html','utf8');
-const assets=['app.js','ascendants.js','curses.js','layout.js','spells.js','racial.js','vecna.js','future.js','mobile.js','concoction-data.js','concoction.js','style.css','mobile.css','concoction.css'];
+const assets=['app.js','ascendants.js','curses.js','layout.js','spells.js','racial.js','vecna.js','future.js','mobile.js','concoction-data.js','concoction.js','observer-config.js','observer-sync.js','style.css','mobile.css','concoction.css','observer-ui.css'];
 for(const name of assets){
  assert(fs.existsSync(name),'Missing '+name);
  assert(html.includes(name),'Script or style not loaded: '+name);
@@ -26,4 +26,23 @@ assert.equal(items.find(r=>r.name==='Potion of Healing').dc,8);
 assert.equal(items.find(r=>r.name==='Midnight Oil').dc,12);
 const sw=fs.readFileSync('sw.js','utf8');
 for(const path of assets)assert(sw.includes(path),'Offline cache missing '+path);
-console.log('Verified '+items.length+' crafting recipes, seven tabs, required UI elements, and offline assets.');
+
+const dm=fs.readFileSync('dm/index.html','utf8');
+for(const asset of ['dm/index.html','dm/dm.css','dm/dm.js']){
+ assert(fs.existsSync(asset),'Missing DM dashboard asset '+asset);
+ assert(sw.includes(asset),'Missing DM offline asset '+asset);
+}
+assert(dm.includes('dmGate')&&dm.includes('dmDashboard'),'DM access gate or dashboard missing');
+assert(dm.includes('dm/dm.js')===false&&dm.includes('src="dm.js"'),'DM script reference incorrect');
+for(const name of ['observerSettingsBtn','observerSendEmail','observerNewLink','observerRevoke','observerGeneratedLink']){
+ assert(seen.has(name),'Missing owner DM Sync control '+name);
+}
+const owner=fs.readFileSync('observer-sync.js','utf8'),viewer=fs.readFileSync('dm/dm.js','utf8'),sql=fs.readFileSync('supabase/vantyr_observer_setup.sql','utf8');
+assert(owner.includes('crypto.getRandomValues')&&owner.includes('crypto.subtle.digest'),'Strong invitation-link generation missing');
+assert(owner.includes('vantyr_observer_push')&&owner.includes('vantyr_observer_rotate'),'Owner RPC actions missing');
+assert(viewer.includes('vantyr_observer_read'),'Read-only DM RPC missing');
+assert(!viewer.includes('vantyr_observer_push')&&!viewer.includes('vantyr_observer_rotate'),'DM viewer must not implement writes');
+for(const x of ['enable row level security','revoke all on table','vantyr_observer_read','auth.uid()','viewer_token_sha256'])assert(sql.includes(x),'SQL security requirement missing: '+x);
+const deploy=fs.readFileSync('.github/workflows/deploy-pages.yml','utf8');
+assert(deploy.includes('dm/index.html')&&deploy.includes('dm/*.js'),'GitHub Pages is not deploying DM files');
+console.log('Verified '+items.length+' crafting recipes, seven tabs, DM access gate, read-only RPC, Supabase SQL security structure, and offline assets.');
