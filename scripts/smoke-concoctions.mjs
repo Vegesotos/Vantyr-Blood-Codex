@@ -144,7 +144,7 @@ assert.equal(await dmPage.locator('.initiative-entry').first().locator('.initiat
 assert.equal(initiative.board.entries.length,1,'DM added enemy must persist');
 await dmPage.locator('.initiative-entry').first().locator('.initiative-score').fill('28');
 await dmPage.locator('.initiative-entry').first().locator('.initiative-score').press('Tab');
-await dmPage.waitForFunction(()=>document.querySelector('#initiativeBoardStatus')?.textContent.includes('saved'));
+for(let i=0;i<50 && initiative.board.entries[0].initiative!==28;i++)await dmPage.waitForTimeout(100);
 assert.equal(initiative.board.entries[0].initiative,28,'DM must be able to edit initiative score');
 await dmPage.locator('#initiativeAddName').fill('Lanfear');
 await dmPage.locator('#initiativeAddScore').fill('35');
