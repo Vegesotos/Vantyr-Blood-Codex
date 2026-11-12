@@ -1,0 +1,20 @@
+
+/* Optional DM Observer owner connection panel. Hidden unless invoked. */
+.observer-launch{white-space:nowrap}
+.observer-overlay[hidden]{display:none!important}
+.observer-overlay{position:fixed;z-index:1200;inset:0;background:#050409d9;backdrop-filter:blur(9px);display:grid;place-items:center;padding:12px}
+.observer-panel{position:relative;width:min(520px,100%);max-height:95dvh;overflow-y:auto;background:linear-gradient(140deg,#311626,#120e19);border:2px solid #96536c;border-radius:18px;padding:22px;box-shadow:0 23px 70px #000d}
+.observer-panel h2{color:#ffe1bd;font:700 25px Georgia,serif;margin:7px 0 12px}
+.observer-panel p{color:#dfbfc8;font-size:13px;line-height:1.55}
+.observer-panel .observer-label{display:grid;gap:5px;font-size:12px;color:#f1c9c2;font-weight:700;margin:13px 0}
+.observer-panel input{width:100%;min-height:40px;background:#100a13;border:1px solid #885269;color:#ffe1d5;padding:9px 12px;border-radius:9px;font-size:13px}
+.observer-panel .observer-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.observer-panel .observer-buttons button{min-height:41px}
+.observer-close{position:absolute;right:13px;top:12px;border:1px solid #794d5d;color:#ffdfc9;border-radius:9px;background:#331a2c;min-width:35px;min-height:35px;cursor:pointer}
+#observerStatus{padding:10px 11px;min-height:40px;border:1px solid #755061;background:#1c111d;border-radius:10px;color:#dbb4c2;font-size:12px;line-height:1.45}
+#observerStatus[data-kind="good"]{color:#b5e7bf;border-color:#43835d}
+#observerStatus[data-kind="bad"]{color:#ffc1bf;border-color:#a95a68}
+#observerLastSent{color:#e1bca0;font-size:11px}
+#observerGeneratedWrap[hidden],#observerSignedOut[hidden],#observerSignedIn[hidden]{display:none!important}
+.observer-panel .observer-note{border-left:3px solid #b77c79;padding-left:10px}
+@media(max-width:760px){.observer-panel{padding:15px}.observer-panel h2{font-size:21px}.observer-launch{font-size:10px;padding:7px!important}}
