@@ -121,7 +121,7 @@ async function login(){
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){status('Enter your email address.','bad');return;}
   status('Sending sign-in email…');
   try{
-    await request('/auth/v1/otp',{body:{email,create_user:true,email_redirect_to:location.origin+location.pathname}});
+    await request('/auth/v1/otp?redirect_to='+encodeURIComponent(location.origin+location.pathname),{body:{email,create_user:true}});
     status('Check your email for a VANTYR sign-in link. Open it on this device.','good');
   }catch(err){status('Sign-in failed: '+err.message,'bad')}
 }
