@@ -26,7 +26,7 @@
   const spellMap=Object.fromEntries(SPELLS.map(s=>[s.id,s]));
   const urls=Object.fromEntries(SPELLS.map(s=>[s.id,`https://dnd5e.wikidot.com/spell:${s.id}`]));
   
-  function saveState(){try{localStorage.setItem(STORAGE,JSON.stringify(state))}catch(e){}}
+  function saveState(){try{localStorage.setItem(STORAGE,JSON.stringify(state));document.dispatchEvent(new Event('vantyr:sync-dirty'))}catch(e){}}
   function currentWish(){return !state.wishDaysRemaining || Number(state.wishDaysRemaining)<=0;}
   function wishDays(){return Math.max(0,Number(state.wishDaysRemaining)||0);}
   function pop(message){if(typeof showResultPopup==='function')showResultPopup(message,[]);else alert(message)}
