@@ -74,3 +74,12 @@ footer{text-align:center;font-size:10px;color:#987f90;margin:25px auto;letter-sp
 @media(max-width:800px){.dm-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dm-identity{gap:10px}.dm-connection{font-size:9px}.dm-avatar{width:75px;height:75px}}
 @media(max-width:470px){.dm-shell{padding:9px 10px 25px}.dm-brand strong{font-size:16px}.dm-brand strong small{display:none}.dm-readonly{font-size:9px}.dm-identity{flex-wrap:wrap}.dm-connection{flex:1 1 100%;display:flex;justify-content:space-between;text-align:left}.dm-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.dm-grid{gap:7px}.dm-unit{padding:11px}.dm-unit h2{font-size:11px}.dm-unit>strong,.dm-vecna-main{font-size:22px}.dm-unit p{font-size:11px}.dm-oaths{grid-template-columns:1fr}.dm-details>summary{font-size:13px}.dm-details summary small{font-size:10px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* v3.6: invitations remain bookmarkable and remembered on the DM device */
+.dm-manual-entry{margin:14px auto 12px;text-align:left;background:#211522;border:1px solid #69465c;border-radius:11px;padding:13px}
+.dm-manual-entry summary{cursor:pointer;color:#e5c0cb;font-size:12px;font-weight:700}
+.dm-manual-entry label{margin-top:12px}
+.dm-manual-entry button{margin-top:0}
+.dm-viewer-tools{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;color:#bfa2b0;font-size:11px}
+.dm-viewer-tools button{color:#eac1c5;background:#271827;border:1px solid #774659;border-radius:9px;cursor:pointer;padding:7px 10px;font-size:11px;font-weight:650}
+.dm-viewer-tools button:hover{background:#49273b}
