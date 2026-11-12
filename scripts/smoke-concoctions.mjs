@@ -13,7 +13,7 @@ assert.equal(await page.locator('.hero #ccInspTotal').count(),1,'Inspiration mus
 assert.equal(await page.locator('#exhaustionPanel').count(),1);
 assert.equal(await page.locator('#tab-combat #paralysisDistance').count(),1,'Paralysis distance belongs to Combat tracker');
 assert.equal(await page.locator('#tab-combat #targetIsParalyzed').count(),1,'Paralysis target must not be duplicated');
-await page.locator('.cc-weapons-fold').first().locator('summary').click();
+await page.locator('.cc-weapons-fold').first().locator(':scope > summary').click();
 assert.equal(await page.locator('#combatWeapons').isVisible(),true);
 await page.locator('.tab-btn[data-tab="rolls"]').click();
 assert.equal(await page.locator('#ccSavingFold').evaluate(x=>x.open),false);
