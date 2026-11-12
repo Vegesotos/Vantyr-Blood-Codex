@@ -8,6 +8,7 @@ const cfg=window.VANTYR_OBSERVER_CONFIG;
 if(!cfg?.url||!cfg?.publishableKey)return;
 const $=id=>document.getElementById(id);
 const KEY='vantyr-observer-owner-session-v1';
+const DM_LINK_KEY='vantyr-observer-private-link-v1';
 const api=cfg.url.replace(/\/$/,'');
 const clamp=(v,min,max)=>Math.min(max,Math.max(min,Number(v)||0));
 let session=null,approved=false,busy=false,lastHash='',lastPublished=null;
@@ -110,6 +111,7 @@ async function claim(){
     await callRpc('vantyr_observer_claim',{});
     approved=true;
     $('observerSignedOut').hidden=true;$('observerSignedIn').hidden=false;
+    displaySavedLink();
     status('Connected · owner authenticated','good');
     await publish();
     await publishInitiativeLast();
@@ -155,6 +157,21 @@ async function hashToken(value){
   const b=new TextEncoder().encode(value);const raw=await crypto.subtle.digest('SHA-256',b);
   return Array.from(new Uint8Array(raw),n=>n.toString(16).padStart(2,'0')).join('');
 }
+function displaySavedLink(){
+  let saved='';
+  try{saved=localStorage.getItem(DM_LINK_KEY)||''}catch(e){}
+  if(saved && /^https:\/\/vegesotos\.github\.io\/Vantyr-Blood-Codex\/dm\/#token=[0-9a-f]{64}$/.test(saved)){
+    $('observerGeneratedLink').value=saved;
+    $('observerGeneratedWrap').hidden=false;
+    $('observerNewLink').textContent='↻ Replace DM Link (revokes current)';
+    $('observerLinkHint').textContent='Saved invitation on this device. Copy this same URL whenever you like; it stays valid until you revoke or replace it.';
+  }else{
+    $('observerGeneratedLink').value='';
+    $('observerGeneratedWrap').hidden=true;
+    $('observerNewLink').textContent='✦ Create / Replace DM Link';
+    $('observerLinkHint').textContent='Already have a full invitation URL? Keep using it. Creating a new link will revoke the existing one.';
+  }
+}
 async function rotate(){
   if(!approved)return;
   try{
@@ -162,16 +179,17 @@ async function rotate(){
     await callRpc('vantyr_observer_rotate',{p_token_sha256:await hashToken(token)});
     const dmURL=new URL('dm/',location.href);
     dmURL.hash='token='+token;
-    $('observerGeneratedLink').value=dmURL.toString();
-    $('observerGeneratedWrap').hidden=false;
-    status('Private DM link ready. Older links are now revoked.','good');
+    try{localStorage.setItem(DM_LINK_KEY,dmURL.toString())}catch(e){}
+    displaySavedLink();
+    status('DM invitation saved on this device. Copy the same link whenever needed.','good');
   }catch(e){status('Unable to create viewer link: '+e.message,'bad')}
 }
 async function revoke(){
   if(!approved)return;
   try{
     await callRpc('vantyr_observer_revoke',{});
-    $('observerGeneratedWrap').hidden=true;$('observerGeneratedLink').value='';
+    try{localStorage.removeItem(DM_LINK_KEY)}catch(e){}
+    displaySavedLink();
     status('DM link revoked. No viewer can read until you create a new link.','good');
   }catch(e){status('Unable to revoke link: '+e.message,'bad')}
 }
@@ -179,6 +197,7 @@ function wire(){
   acceptRedirect();
   $('observerSettingsBtn').addEventListener('click',()=>{
     $('observerSettings').hidden=false;
+    if(approved)displaySavedLink();
     if(session&&!approved)claim();
   });
   $('observerClose').addEventListener('click',()=>{$('observerSettings').hidden=true});
