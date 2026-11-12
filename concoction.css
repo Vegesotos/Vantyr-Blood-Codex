@@ -184,8 +184,8 @@
 
 /* ===== v3.3 compact mobile codex ===== */
 .hero .hero-copy{position:relative;min-width:0}
-.hero .cc-inspiration{position:absolute;right:0;top:0;width:228px;max-width:42%;z-index:2;padding:11px;background:linear-gradient(140deg,#351328,#180f1e);box-shadow:0 7px 22px #0007}
-.hero .hero-copy>h2,.hero .hero-copy>p,.hero .hero-tags{max-width:calc(100% - 230px)}
+.hero .cc-inspiration{position:absolute;right:0;top:102px;width:216px;max-width:40%;z-index:2;padding:11px;background:linear-gradient(140deg,#351328,#180f1e);box-shadow:0 7px 22px #0007}
+.hero .hero-tags{max-width:calc(100% - 220px)}
 .hero .cc-insp-pip{width:15px;height:15px}
 .cc-mini-exhaustion{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #79394b;background:linear-gradient(115deg,#311322,#150e18);border-radius:12px;padding:7px 11px;margin:8px 0 12px;box-shadow:inset 0 1px #ffc4c31a}
 .cc-mini-exhaustion .exhaustion-left{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
