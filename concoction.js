@@ -198,8 +198,22 @@
     bagAdd(entry,clamp($('ccFinishQty').value,1,9999));
     $('ccFinishDialog').hidden=true;selectRecipe(active);
   }
+  function renderInspiration(){
+    save.inspirationMax=clamp(save.inspirationMax||10,1,30);
+    save.inspiration=clamp(save.inspiration,0,save.inspirationMax);
+    $('ccInspMax').value=save.inspirationMax;
+    $('ccInspTotal').textContent=save.inspiration+' / '+save.inspirationMax;
+    $('ccInspPips').innerHTML=Array.from({length:save.inspirationMax},(_,i)=>'<button type="button" class="cc-insp-pip '+(i<save.inspiration?'active':'')+'" data-insp="'+(i+1)+'" aria-label="Set inspiration to '+(i+1)+'" aria-pressed="'+(i<save.inspiration)+'"></button>').join('');
+  }
+  function wireInspiration(){
+    renderInspiration();
+    $('ccInspMinus').addEventListener('click',()=>{save.inspiration=clamp(save.inspiration-1,0,save.inspirationMax);persist();renderInspiration()});
+    $('ccInspPlus').addEventListener('click',()=>{save.inspiration=clamp(save.inspiration+1,0,save.inspirationMax);persist();renderInspiration()});
+    $('ccInspMax').addEventListener('change',e=>{save.inspirationMax=clamp(e.target.value,1,30);save.inspiration=clamp(save.inspiration,0,save.inspirationMax);persist();renderInspiration()});
+    $('ccInspPips').addEventListener('click',e=>{const b=e.target.closest('[data-insp]');if(b){const n=Number(b.dataset.insp);save.inspiration=save.inspiration===n?n-1:n;persist();renderInspiration()}});
+  }
   function wire(){
-    initFilters();renderRecipes();renderInventory();syncLab();
+    initFilters();renderRecipes();renderInventory();syncLab();wireInspiration();
     $('ccLab').addEventListener('change',e=>{save.lab=e.target.checked;persist();syncLab();craftingSummary()});
     $('ccMute').checked=!!save.mute;
     $('ccMute').addEventListener('change',e=>{save.mute=e.target.checked;persist()});
