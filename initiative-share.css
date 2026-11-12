@@ -1,0 +1,25 @@
+
+/* Stand by the Emperor — initiative distribution modal */
+.emperor-overlay[hidden]{display:none!important}
+.emperor-overlay{position:fixed;inset:0;z-index:1700;display:grid;place-items:center;padding:14px;background:#07050be8;backdrop-filter:blur(9px)}
+.emperor-share-panel{width:min(580px,100%);max-height:95dvh;overflow-y:auto;background:radial-gradient(circle at 50% 0%,#492039 0%,#251422 54%,#140c16 100%);border:2px solid #b87e80;border-radius:22px;padding:21px;box-shadow:0 30px 80px #000c,0 0 37px #e07c7e22}
+.emperor-share-panel h2{color:#ffdfbd;font:700 clamp(23px,4vw,31px) Georgia,serif;margin:5px 0}
+.emperor-share-panel p{color:#dbc0ca;font-size:13px;line-height:1.5}
+.emperor-dice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin:19px 0}
+.emperor-die-choice{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;color:#f1cbd1;background:#281825;border:2px solid #694452;border-radius:15px;padding:15px 9px;transition:border-color .2s,transform .2s,background .2s}
+.emperor-die-choice.selected{border-color:#e8af76;background:linear-gradient(135deg,#6a3540,#3c2134);box-shadow:0 0 24px #e5a26530}
+.emperor-die-choice:focus-visible{outline:3px solid #e5b47d;outline-offset:3px}
+.emperor-die-label{font-size:10px;font-weight:750;letter-spacing:.14em;color:#d5aeb7}
+.emperor-die-face{display:grid;place-items:center;width:80px;height:84px;clip-path:polygon(50% 0%,96% 20%,88% 80%,50% 100%,12% 80%,4% 20%);background:linear-gradient(145deg,#a15564,#5c2a3f 65%);border:0;color:#fff1db;font:800 39px Georgia,serif;filter:drop-shadow(0 0 8px #b75a62)}
+.emperor-die-choice.selected .emperor-die-face{background:linear-gradient(145deg,#f2c38c,#b17356 70%);color:#421b25}
+.emperor-die-bonus{font-size:10px;color:#cba9b9;letter-spacing:.07em}
+.emperor-die-choice strong{font-size:16px;color:#ffe3c4}
+.emperor-die-tag{font-size:10px;font-weight:800;letter-spacing:.06em;color:#e8b2a8}
+.emperor-die-choice.selected .emperor-die-tag{color:#ffe7b2}
+.emperor-gift-toggle{display:block;width:100%;border:1px solid #997083;border-radius:10px;background:#382536;padding:12px 14px;color:#ffe2cf;font-size:14px;font-weight:700;cursor:pointer}
+.emperor-gift-area{margin:12px 0;padding:13px;border:1px solid #835065;border-radius:12px;background:#211522}
+.emperor-gift-area label{display:grid;gap:7px;font-size:12px;font-weight:750;color:#ecd0d4}
+.emperor-gift-area select{width:100%;padding:11px 10px;background:#130d18;color:#ffe9d8;border:1px solid #a36b80;border-radius:9px}
+.emperor-share-error{min-height:18px;margin:7px 0;color:#ffc0bb!important}
+.emperor-share-panel .emperor-confirm{width:100%;margin-top:6px;padding:13px 12px;border:1px solid #f5bb86;border-radius:12px;background:linear-gradient(135deg,#ac5264,#70304d);color:#fff5df;font-weight:800;cursor:pointer}
+@media(max-width:480px){.emperor-share-panel{padding:13px}.emperor-dice-grid{gap:8px}.emperor-die-choice{padding:10px 4px}.emperor-die-face{width:65px;height:70px;font-size:32px}.emperor-die-choice strong{font-size:13px}.emperor-die-tag{font-size:9px}}
