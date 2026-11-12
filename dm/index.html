@@ -15,12 +15,16 @@
 <section id="dmGate" class="dm-gate dm-panel">
   <div class="dm-gate-icon">🩸</div>
   <h1>Dungeon Master's Observer</h1>
-  <p>Open the private invitation link sent by Vantyr's player. Your DM view needs no account or installation.</p>
-  <label>Private viewer code <input id="dmTokenField" type="password" placeholder="Paste your 64-character code" autocomplete="off" spellcheck="false"/></label>
-  <button id="dmConnect">Open Observer</button><p id="dmGateMessage" class="dm-error" aria-live="polite"></p>
-  <small>Only Vantyr's player can change resources. This screen is read-only.</small>
+  <p>Open your <strong>full private invitation URL</strong> from Vantyr's player. Bookmark that link to come back whenever you like. You won't need an account or a code.</p>
+  <p id="dmGateMessage" class="dm-error" aria-live="polite">This public preview does not contain your private invitation.</p>
+  <details class="dm-manual-entry"><summary>Have an invitation code instead?</summary>
+    <label>Private invitation code <input id="dmTokenField" type="password" placeholder="Paste your private code" autocomplete="off" spellcheck="false"/></label>
+    <button id="dmConnect">Open Observer</button>
+  </details>
+  <small>Your DM invitation remains valid until Vantyr's player revokes or replaces it.</small>
 </section>
 <main id="dmDashboard" hidden>
+<div class="dm-viewer-tools"><span>Private invitation remembered on this device</span><button type="button" id="dmForgetDevice">Forget this device</button></div>
 <nav class="dm-screen-tabs" aria-label="Dungeon Master workspaces"><button type="button" id="dmGoCharacter" class="selected" aria-pressed="true">🩸 Vantyr Status</button><button type="button" id="dmGoInitiative" aria-pressed="false">⌛ Initiative Board</button></nav>
 <div id="dmCharacterView">
   <section class="dm-identity dm-panel">
