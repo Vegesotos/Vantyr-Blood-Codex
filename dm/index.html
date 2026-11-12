@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta name="theme-color" content="#180f18"/>
 <title>VANTYR · Dungeon Master's Observer</title>
-<link rel="stylesheet" href="dm.css"/>
+<link rel="stylesheet" href="dm.css"/><link rel="stylesheet" href="initiative.css"/>
 <script defer src="../observer-config.js"></script>
-<script defer src="dm.js"></script>
+<script defer src="dm.js"></script><script defer src="initiative.js"></script>
 </head>
 <body>
 <div class="dm-shell">
@@ -21,6 +21,8 @@
   <small>Only Vantyr's player can change resources. This screen is read-only.</small>
 </section>
 <main id="dmDashboard" hidden>
+<nav class="dm-screen-tabs" aria-label="Dungeon Master workspaces"><button type="button" id="dmGoCharacter" class="selected" aria-pressed="true">🩸 Vantyr Status</button><button type="button" id="dmGoInitiative" aria-pressed="false">⌛ Initiative Board</button></nav>
+<div id="dmCharacterView">
   <section class="dm-identity dm-panel">
     <div class="dm-avatar"><img src="../assets/vantyr-portrait.jpg" alt="Vantyr portrait"/></div>
     <div class="dm-intro"><span class="dm-eyebrow">LEVEL 15 · BLOOD HUNTER · MUTANT ORDER</span><h1>VANTYR</h1><p id="dmForm">Normal Form</p></div>
@@ -47,6 +49,38 @@
    <p><b>Future Is Set:</b> When active, Vantyr has advantage on attacks, checks and saves; incoming attacks have disadvantage.</p>
    <p><b>Starshot Crossbow:</b> Hand of Vecna adds 2d8 cold on hits. Constellations share three charges.</p>
   </div></details>
+
+</div>
+<section id="dmInitiativeView" class="dm-initiative-view" hidden aria-label="DM Initiative Board">
+  <div class="dm-panel initiative-header">
+    <div><span class="dm-eyebrow">DUNGEON MASTER · COMBAT ORDER</span>
+      <h1>⌛ INITIATIVE BOARD</h1>
+      <p>Manage everyone at the table. Initiatives are automatically sorted from highest to lowest.</p></div>
+    <div id="initiativeRound" class="initiative-round">ROUND 1</div>
+  </div>
+  <section class="dm-panel initiative-board">
+    <div class="initiative-toolbar">
+      <button id="initiativeNext" type="button" class="primary">⚔ Next Turn</button>
+      <button id="initiativeResetTurn" type="button">↺ Restart Round</button>
+      <button id="initiativeRefresh" type="button">⟳ Refresh</button>
+      <button id="initiativeClear" type="button" class="danger">✕ Clear Board</button>
+      <div id="initiativeBoardStatus" class="initiative-board-status" role="status">Connecting to initiative board…</div>
+    </div>
+    <div class="initiative-add">
+      <h2>＋ ADD COMBATANT</h2>
+      <div class="initiative-add-controls">
+        <input id="initiativeAddName" maxlength="60" placeholder="Character / NPC / Enemy" aria-label="Combatant name"/>
+        <select id="initiativeAddType" aria-label="Combatant type">
+          <option value="player">Player</option><option value="npc">NPC</option><option value="enemy">Enemy</option>
+        </select>
+        <input id="initiativeAddScore" type="number" min="-99" max="999" placeholder="Initiative" aria-label="Initiative value"/>
+        <button id="initiativeAddBtn" type="button">＋ Add</button>
+      </div>
+    </div>
+    <div id="initiativeEntries" class="initiative-list" aria-live="polite"><p class="initiative-empty">No combatants yet.</p></div>
+    <p class="initiative-footnote">🩸 Vantyr's Stand by the Emperor roll appears here when shared from the player app. The DM can edit any initiative score without changing the character's HP or abilities. The DM invitation link grants initiative-board editing only.</p>
+  </section>
+</section>
   <footer>VANTYR · DUNGEON MASTER'S OBSERVER · READ-ONLY STATUS · NO CONTROLS</footer>
 </main>
 </div>
