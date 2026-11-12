@@ -1,0 +1,40 @@
+
+/* Dedicated DM Initiative Board: its own full-screen workspace. */
+.dm-screen-tabs{display:flex;gap:10px;margin:0 0 14px}
+.dm-screen-tabs button{flex:1;min-height:43px;cursor:pointer;color:#dfbfca;background:#261525;border:1px solid #754257;border-radius:12px;font-weight:750}
+.dm-screen-tabs button.selected{color:#ffe7c8;background:linear-gradient(125deg,#773d53,#482639);border-color:#d29a84;box-shadow:inset 0 1px #efc9a522}
+.dm-initiative-view{display:grid;gap:12px}
+.initiative-header{padding:20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.initiative-header h1{font:700 clamp(24px,4vw,33px) Georgia,serif;color:#ffdfbd;margin:6px 0}
+.initiative-header p{color:#cfafbc;font-size:12px;margin:0;line-height:1.5}
+.initiative-round{background:#5e3044;color:#ffddae;border:1px solid #af7774;border-radius:12px;padding:12px 16px;font-weight:800;white-space:nowrap;font-size:14px}
+.initiative-board{padding:17px;min-height:240px}
+.initiative-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:16px}
+.initiative-toolbar button,.initiative-add button{cursor:pointer;border-radius:9px;border:1px solid #af7586;background:#4b283d;color:#ffe0d1;padding:10px 13px;min-height:40px;font-weight:750}
+.initiative-toolbar button.primary{background:#9b4856;border-color:#e3a37e;color:#fff2dc}
+.initiative-toolbar .danger{border-color:#763a44;color:#e3a2ac;background:#2f1c2a}
+.initiative-toolbar .initiative-board-status{color:#d5b4bb;font-size:11px;line-height:1.4;flex:1 1 100%}
+.initiative-board-status[data-error="true"]{color:#ffb0b7}
+.initiative-add{padding:15px;background:#251727;border:1px solid #6b4054;border-radius:13px;margin-bottom:15px}
+.initiative-add h2{font:700 15px Georgia,serif;color:#ffdfcd;margin:0 0 12px}
+.initiative-add-controls{display:grid;grid-template-columns:minmax(130px,1fr) 110px 95px 100px;gap:8px}
+.initiative-add input,.initiative-add select,.initiative-entry input,.initiative-entry select{background:#170f1b;border:1px solid #815168;color:#ffdfd5;padding:9px 10px;min-height:39px;border-radius:9px;width:100%;min-width:0}
+.initiative-add input:focus-visible,.initiative-entry input:focus-visible{outline:2px solid #e4b588}
+.initiative-list{display:grid;gap:7px}
+.initiative-entry{display:grid;align-items:center;grid-template-columns:30px 29px minmax(140px,1fr) 86px 33px;gap:10px;padding:10px 11px;background:#231623;border:1px solid #694052;border-radius:12px}
+.initiative-entry.acting{border-color:#efb077;background:linear-gradient(105deg,#5d2b42,#301a2b);box-shadow:0 0 19px #c86e5c29}
+.initiative-rank{font:750 14px Georgia,serif;color:#cbaaac;text-align:center}
+.initiative-type-icon{font-size:18px;color:#ffc18e;text-align:center}
+.initiative-type-icon.npc{color:#caafe3}
+.initiative-type-icon.enemy{color:#ee98a8}
+.initiative-identity{display:grid;grid-template-columns:minmax(110px,1fr) 92px;gap:5px 9px;align-items:center;min-width:0}
+.initiative-name{font-weight:750}
+.initiative-type{font-size:11px}
+.initiative-rollnote{grid-column:1/-1;color:#c99dac;font-size:10px}
+.initiative-score{font:750 19px Georgia,serif!important;text-align:center;border-color:#985e68!important;color:#ffe6bf!important}
+.initiative-remove{cursor:pointer;border:1px solid #713945;color:#f1a9aa;background:#381e2c;border-radius:9px;min-width:32px;height:35px;font-size:23px;line-height:1}
+.initiative-empty{padding:28px 10px;text-align:center;color:#cfa5b4;font-size:13px}
+.initiative-footnote{font-size:11px;color:#c9a9b7;line-height:1.6}
+.initiative-turn-controls{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+@media(max-width:760px){.initiative-add-controls{grid-template-columns:1fr 90px}.initiative-add-controls button{grid-column:1/-1}.initiative-entry{grid-template-columns:22px 25px minmax(0,1fr) 76px 30px;gap:5px;padding:8px}.initiative-identity{grid-template-columns:1fr}.initiative-type{width:100%;max-width:115px}.initiative-rollnote{font-size:9px}}
+@media(max-width:470px){.initiative-header{padding:12px}.initiative-round{font-size:11px;padding:8px}.initiative-board{padding:9px}.initiative-entry{grid-template-columns:18px minmax(0,1fr) 64px 26px}.initiative-type-icon{display:none}.initiative-name{font-size:12px!important}.initiative-score{font-size:16px!important;padding:7px 3px!important}.initiative-remove{min-width:25px;height:31px}.initiative-add-controls{grid-template-columns:1fr 85px}.dm-screen-tabs button{font-size:12px}}
