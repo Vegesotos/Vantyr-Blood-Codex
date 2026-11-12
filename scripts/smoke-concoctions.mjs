@@ -98,6 +98,30 @@ await dmPage.locator('#dmTokenField').fill('not-a-real-token');
 await dmPage.locator('#dmConnect').click();
 assert.match(await dmPage.locator('#dmGateMessage').innerText(),/Invalid private link format/);
 assert.equal(await dmPage.locator('#dmDashboard').isVisible(),false);
+
+const exampleSnapshot={
+  combat:{active:true,turn:4,form:'Normal'},
+  vitals:{hp:124,maxHp:178,tempHp:12,ac:22,exhaustion:1},
+  bloodMagic:{charges:2,freeCorrosion:false,squelchingReady:true,silenceReady:true,effects:[],brain:{active:false,storedDamage:0}},
+  future:{foresightDice:4,absoluteFailures:2,absoluteSuccesses:3,futureSetActive:false,futureSetUsed:false},
+  weapons:{starshotCharges:1,constellations:{balance:0,flames:1,rogue:0},rites:{starshot:{type:'dawn',active:true}},paralyzedTurns:0},
+  oathForms:{vigor:{active:true,remaining:5},fury:{active:false,used:false},overdrive:{active:false,used:false}},
+  vecna:{eye:7,hand:5,wishDaysRemaining:0}
+};
+const endpoint='**/rest/v1/rpc/vantyr_observer_read';
+await dmPage.route(endpoint,route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({snapshot:exampleSnapshot,revision:1,updated_at:new Date().toISOString()})}));
+await dmPage.locator('#dmTokenField').fill('a'.repeat(64));
+await dmPage.locator('#dmConnect').click();
+await dmPage.locator('#dmDashboard').waitFor({state:'visible'});
+assert.equal(await dmPage.locator('#dmHp').innerText(),'124 / 178');
+assert.equal(await dmPage.locator('#dmForesight').innerText(),'d6 × 4');
+assert.match(await dmPage.locator('#dmConnection').innerText(),/LIVE/);
+await dmPage.unroute(endpoint);
+await dmPage.route(endpoint,route=>route.fulfill({status:400,contentType:'application/json',body:JSON.stringify({message:'Invalid or revoked viewer link'})}));
+await dmPage.reload({waitUntil:'networkidle'});
+await dmPage.locator('#dmGate').waitFor({state:'visible'});
+assert.equal(await dmPage.locator('#dmDashboard').isVisible(),false,'Revoked DM link must hide old private status');
+assert.match(await dmPage.locator('#dmGateMessage').innerText(),/expired or been revoked/);
 assert.equal(dmErrors.length,0,'DM page JS errors: '+dmErrors.join('; '));
 await dmPage.close();
 assert.equal(await page.locator('#observerSettingsBtn').count(),1,'Owner DM Sync launcher missing');
