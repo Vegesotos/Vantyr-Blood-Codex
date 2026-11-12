@@ -117,6 +117,45 @@ await dmPage.locator('#dmDashboard').waitFor({state:'visible'});
 assert.equal(await dmPage.locator('#dmHp').innerText(),'124 / 178');
 assert.equal(await dmPage.locator('#dmForesight').innerText(),'d6 × 4');
 assert.match(await dmPage.locator('#dmConnection').innerText(),/LIVE/);
+// DM Initiative workspace: independent view, persistent server state, editable ordering.
+let initiative={board:{entries:[],round:1,activeId:null},revision:0,updated_at:null};
+await dmPage.route('**/rest/v1/rpc/vantyr_initiative_*',async route=>{
+ const name=route.request().url();
+ const body=route.request().postDataJSON();
+ if(name.endsWith('vantyr_initiative_read')){
+  return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(initiative)});
+ }
+ if(name.endsWith('vantyr_initiative_write')){
+  if(Number(body.p_revision)!==initiative.revision)return route.fulfill({status:409,contentType:'application/json',body:JSON.stringify({message:'Board changed'})});
+  initiative={board:body.p_board,revision:initiative.revision+1,updated_at:new Date().toISOString()};
+  return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(initiative.revision)});
+ }
+ return route.abort();
+});
+await dmPage.locator('#dmGoInitiative').click();
+assert.equal(await dmPage.locator('#dmCharacterView').isVisible(),false,'Initiative must show a clean separate workspace');
+assert.equal(await dmPage.locator('#dmInitiativeView').isVisible(),true);
+await dmPage.locator('#initiativeAddName').fill('Goblin Scout');
+await dmPage.locator('#initiativeAddType').selectOption('enemy');
+await dmPage.locator('#initiativeAddScore').fill('18');
+await dmPage.locator('#initiativeAddBtn').click();
+await dmPage.locator('.initiative-entry').filter({hasText:'Goblin Scout'}).waitFor({state:'visible'});
+assert.equal(initiative.board.entries.length,1,'DM added enemy must persist');
+await dmPage.locator('.initiative-entry').filter({hasText:'Goblin Scout'}).locator('.initiative-score').fill('28');
+await dmPage.locator('.initiative-entry').filter({hasText:'Goblin Scout'}).locator('.initiative-score').press('Tab');
+await dmPage.waitForFunction(()=>document.querySelector('#initiativeBoardStatus')?.textContent.includes('saved'));
+assert.equal(initiative.board.entries[0].initiative,28,'DM must be able to edit initiative score');
+await dmPage.locator('#initiativeAddName').fill('Lanfear');
+await dmPage.locator('#initiativeAddScore').fill('35');
+await dmPage.locator('#initiativeAddBtn').click();
+await dmPage.locator('.initiative-entry').filter({hasText:'Lanfear'}).waitFor({state:'visible'});
+assert.equal(await dmPage.locator('.initiative-entry').first().locator('.initiative-name').inputValue(),'Lanfear','Higher initiatives must be first');
+await dmPage.locator('#initiativeNext').click();
+await dmPage.waitForFunction(()=>document.querySelector('#initiativeRound')?.textContent.includes('ROUND 1'));
+assert.equal(initiative.board.activeId,initiative.board.entries.find(e=>e.name==='Lanfear').id);
+await dmPage.locator('#dmGoCharacter').click();
+assert.equal(await dmPage.locator('#dmCharacterView').isVisible(),true,'DM must be able to return to Vantyr status');
+await dmPage.unroute('**/rest/v1/rpc/vantyr_initiative_*');
 await dmPage.unroute(endpoint);
 await dmPage.route(endpoint,route=>route.fulfill({status:400,contentType:'application/json',body:JSON.stringify({message:'Invalid or revoked viewer link'})}));
 await dmPage.reload({waitUntil:'networkidle'});
@@ -130,6 +169,21 @@ await page.locator('#observerSettingsBtn').click();
 assert.equal(await page.locator('#observerSettings').isVisible(),true,'Owner sync dialog should open');
 assert.equal(await page.locator('#observerSignedOut').isVisible(),true,'Owner sync should be opt-in');
 await page.locator('#observerClose').click();
+// Stand by the Emperor: always two advantage dice; can assign the other to a named ally.
+await page.locator('.tab-btn[data-tab="combat"]').click();
+await page.locator('#standByEmperorBtn').click();
+assert.equal(await page.locator('#emperorShareDialog').isVisible(),true,'Initiative assignment prompt must open');
+assert.equal(await page.locator('.emperor-die-choice').count(),2,'Two rolled d20 faces required');
+await page.locator('.emperor-die-choice').first().click();
+await page.locator('#emperorShareToggle').click();
+await page.locator('#emperorAlly').selectOption('Kokopelis');
+await page.locator('#emperorShareConfirm').click();
+assert.equal(await page.locator('#emperorShareDialog').isVisible(),false);
+const assigned=await page.evaluate(()=>JSON.parse(localStorage.getItem('vantyr-last-initiative-assignment-v1')||'null'));
+assert.equal(assigned.ally,'Kokopelis');
+assert.equal(assigned.vantyr,assigned.vantyrRaw+assigned.bonus);
+assert.equal(assigned.allyInitiative,assigned.allyRaw+assigned.bonus);
+assert.equal(errors.length,0,'Page JS errors: '+errors.join('; '));
 await page.screenshot({path:'concoction-mobile-smoke.png',fullPage:false});
 await browser.close();
 console.log('PASS: mobile nav, 169 recipes, search, Craft accordion, two rolls, result dialog, inventory edit + persisted data, no JS errors');
