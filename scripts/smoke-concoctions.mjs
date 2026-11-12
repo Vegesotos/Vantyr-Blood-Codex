@@ -98,7 +98,7 @@ assert.equal(await dmPage.locator('#dmDashboard').isVisible(),false,'Private sta
 await dmPage.locator('.dm-manual-entry > summary').click();
 await dmPage.locator('#dmTokenField').fill('not-a-real-token');
 await dmPage.locator('#dmConnect').click();
-assert.match(await dmPage.locator('#dmGateMessage').innerText(),/Invalid private link format/);
+assert.match(await dmPage.locator('#dmGateMessage').innerText(),/Invalid private link/);
 assert.equal(await dmPage.locator('#dmDashboard').isVisible(),false);
 
 const exampleSnapshot={
