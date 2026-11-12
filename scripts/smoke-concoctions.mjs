@@ -152,7 +152,7 @@ await dmPage.locator('#initiativeAddBtn').click();
 await dmPage.locator('.initiative-entry').nth(1).waitFor({state:'visible'});
 assert.equal(await dmPage.locator('.initiative-entry').first().locator('.initiative-name').inputValue(),'Lanfear','Higher initiatives must be first');
 await dmPage.locator('#initiativeNext').click();
-await dmPage.waitForFunction(()=>document.querySelector('#initiativeRound')?.textContent.includes('ROUND 1'));
+await dmPage.locator('.initiative-entry.acting').waitFor({state:'visible'});
 assert.equal(initiative.board.activeId,initiative.board.entries.find(e=>e.name==='Lanfear').id);
 await dmPage.locator('#dmGoCharacter').click();
 assert.equal(await dmPage.locator('#dmCharacterView').isVisible(),true,'DM must be able to return to Vantyr status');
