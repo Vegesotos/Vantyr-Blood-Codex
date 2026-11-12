@@ -5,6 +5,11 @@
   const defaults=()=>({eye:8,hand:8,wishDaysRemaining:0,xray:false,lastDawn:null});
   let state=defaults();
   try{const stored=JSON.parse(localStorage.getItem(STORAGE)||'null');if(stored&&typeof stored==='object'){state={...state,...stored};for(const part of ['eye','hand'])state[part]=Math.max(0,Math.min(8,Math.floor(Number(state[part])||0)));}}catch(e){}
+  // Expose only resource counts for the read-only DM snapshot (never artifact controls).
+  window.VANTYR_OBSERVER_VECNA=()=>({
+    eye:state.eye,hand:state.hand,
+    wishDaysRemaining:state.wishDaysRemaining,xray:state.xray
+  });
   const $=id=>document.getElementById(id);
   const SPELLS=[
     {id:'clairvoyance',name:'Clairvoyance',part:'eye',cost:2,level:'3rd-level divination',timing:'10 minutes',range:'1 mile',duration:'Concentration, up to 10 minutes',save:'—',summary:'Create a stationary invisible sensor in a known or obvious location; choose sight or hearing and change sense as an action.',read:'Create an invisible sensor within 1 mile at a familiar or obvious place. You can perceive sight or sound through the sensor, switching the sense by using an action. It lasts for up to 10 minutes while concentrating.'},
