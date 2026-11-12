@@ -6,7 +6,7 @@ const FUTURE_STORE='vantyr-future-devil-v1';
 const FUTURE_DEFAULTS=()=>({dice:0,futureSetUsed:false,futureSetActive:false,movementUsed:false,acAdjustment:0,failures:3,successes:3});
 let futureData=FUTURE_DEFAULTS();
 try{const stored=JSON.parse(localStorage.getItem(FUTURE_STORE)||'null');if(stored&&typeof stored==='object')futureData={...futureData,...stored}}catch(e){console.warn('Future Devil state unavailable',e)}
-function futurePersist(){try{localStorage.setItem(FUTURE_STORE,JSON.stringify(futureData))}catch(e){console.warn('Future Devil save unavailable',e)}}
+function futurePersist(){try{localStorage.setItem(FUTURE_STORE,JSON.stringify(futureData));document.dispatchEvent(new Event('vantyr:sync-dirty'))}catch(e){console.warn('Future Devil save unavailable',e)}}
 function futureIsSetActive(){return !!(data.inCombat&&futureData.futureSetActive)}
 function futureEffectiveMode(mode){
  if(!futureIsSetActive())return mode;
