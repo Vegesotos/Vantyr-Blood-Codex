@@ -11,7 +11,7 @@
   const getRollMode=()=>document.querySelector('input[name="ccRollMode"]:checked')?.value||'normal';
   const kits=["Alchemist's Supplies","Herbalism Kit","Poisoner's Kit","Minor Potions"];
   const tiers=['Common','Uncommon','Rare','Very Rare'];
-  let save={lab:false,mute:false,inventory:[],inspiration:0,inspirationMax:10};
+  let save={lab:false,mute:false,inventory:[],inspiration:0,inspirationMax:10,gold:0};
   try{const v=JSON.parse(localStorage.getItem(KEY)||'null');if(v&&typeof v==='object')save={...save,...v,inventory:Array.isArray(v.inventory)?v.inventory:[]};}catch(e){}
   let category='All',rarity='All',search='',active=null,step='select',rolls=null;
   const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(save))}catch(e){console.warn('Concoction storage unavailable',e)}};
@@ -103,6 +103,7 @@
     });
   }
   function renderInventory(){
+    if($('ccGoldAmount'))$('ccGoldAmount').textContent=String(Math.max(0,Math.floor(Number(save.gold)||0))).replace(/\B(?=(\d{3})+(?!\d))/g,',');
     const inv=$('ccBagList'),total=save.inventory.reduce((n,x)=>n+Math.max(0,Number(x.quantity)||0),0);
     $('ccBagCount').textContent=save.inventory.length+' entries · '+total+' items';
     if(!save.inventory.length){inv.innerHTML='<p class="cc-empty">Your potion bag is empty. Craft a recipe or add an item manually.</p>';return;}
@@ -244,12 +245,25 @@
       persist();renderInventory();
     });
     $('ccAddManual').addEventListener('click',newBag);
-    $('ccBagOpen').addEventListener('click',()=>{
-      const bag=$('ccBagContents'),willOpen=bag.hidden;
-      bag.hidden=!willOpen;$('ccBagOpen').setAttribute('aria-expanded',String(willOpen));
-      $('ccBagOpen').classList.remove('cc-bag-sparkle');void $('ccBagOpen').offsetWidth;
-      if(willOpen){$('ccBagOpen').classList.add('cc-bag-sparkle');sound();renderInventory();}
-    });
+    const toggleBag=(open)=>{
+      const bag=$('ccBagContents'),trigger=$('ccBagOpen'),stage=$('ccBagStage');
+      bag.hidden=!open;
+      trigger.setAttribute('aria-expanded',String(open));
+      trigger.setAttribute('aria-label',open?'Close Vantyr\'s Inventory':'Open Vantyr\'s Inventory');
+      stage.classList.toggle('cc-bag-open',open);
+      trigger.classList.remove('cc-bag-sparkle');void trigger.offsetWidth;
+      if(open){trigger.classList.add('cc-bag-sparkle');sound();renderInventory();}
+    };
+    $('ccBagOpen').addEventListener('click',()=>toggleBag($('ccBagContents').hidden));
+    $('ccBagClose').addEventListener('click',()=>toggleBag(false));
+    const changeGold=sign=>{
+      const amount=Math.floor(Number($('ccGoldInput').value));
+      if(!Number.isFinite(amount)||amount<1)return;
+      save.gold=Math.max(0,Math.floor(Number(save.gold)||0)+sign*amount);
+      persist();renderInventory();
+    };
+    $('ccGoldAdd').addEventListener('click',()=>changeGold(1));
+    $('ccGoldMinus').addEventListener('click',()=>changeGold(-1));
     $('ccEditCancel').addEventListener('click',()=>{$('ccEditDialog').hidden=true});
     $('ccEditDialog').addEventListener('click',e=>{if(e.target===$('ccEditDialog'))$('ccEditDialog').hidden=true});
     $('ccEditForm').addEventListener('submit',e=>{
