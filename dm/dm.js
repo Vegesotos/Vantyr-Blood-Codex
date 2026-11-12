@@ -60,7 +60,7 @@ async function refresh(){
     const url=cfg.url.replace(/\/$/,'')+'/rest/v1/rpc/vantyr_observer_read';
     const response=await fetch(url,{method:'POST',cache:'no-store',headers:{'apikey':cfg.publishableKey,'Content-Type':'application/json'},body:JSON.stringify({p_token:token})});
     const json=await response.json().catch(()=>({}));
-    if(!response.ok)throw new Error(json.message||json.error||'Unable to read VANTYR status');
+    if(!response.ok){const e=new Error(json.message||json.error||'Unable to read VANTYR status');e.status=response.status;throw e;}
     $('dmGate').hidden=true;$('dmDashboard').hidden=false;
     if(json.revision!==lastRevision){lastRevision=json.revision;render(json.snapshot||{});}
     lastUpdate=json.updated_at||null;
@@ -69,7 +69,12 @@ async function refresh(){
     else if(Date.now()-new Date(lastUpdate).getTime()<15000)connection('live','● LIVE · READ ONLY');
     else connection('stale','● LAST KNOWN STATE');
   }catch(err){
-    if($('dmDashboard').hidden)text('dmGateMessage','Could not open observer: '+err.message+'. Ask Vantyr’s player to check the private link and database setup.');
+    if(/invalid or revoked viewer link/i.test(err.message)||err.status===403){
+      token='';lastRevision=-1;
+      try{sessionStorage.removeItem('vantyr-dm-link')}catch(e){}
+      $('dmDashboard').hidden=true;$('dmGate').hidden=false;
+      text('dmGateMessage','This invitation has expired or been revoked. Ask Vantyr’s player for a new private link.');
+    }else if($('dmDashboard').hidden){text('dmGateMessage','Could not open observer: '+err.message+'. Ask Vantyr’s player to check the private link and database setup.');}
     else connection('stale','● CONNECTION INTERRUPTED');
   }finally{inFlight=false}
 }
