@@ -117,6 +117,15 @@ await dmPage.locator('#dmDashboard').waitFor({state:'visible'});
 assert.equal(await dmPage.locator('#dmHp').innerText(),'124 / 178');
 assert.equal(await dmPage.locator('#dmForesight').innerText(),'d6 × 4');
 assert.match(await dmPage.locator('#dmConnection').innerText(),/LIVE/);
+const inviteUrl=dmPage.url();
+assert.match(inviteUrl,/#token=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa$/,'Full private link must remain in URL for bookmarking');
+await dmPage.reload({waitUntil:'networkidle'});
+await dmPage.locator('#dmDashboard').waitFor({state:'visible'});
+assert.equal(dmPage.url(),inviteUrl,'Bookmarked URL must survive reload');
+await dmPage.goto('http://127.0.0.1:8765/dm/',{waitUntil:'networkidle'});
+await dmPage.locator('#dmDashboard').waitFor({state:'visible'});
+assert.equal(dmPage.url(),inviteUrl,'DM device should remember private link even when visiting the plain address');
+
 // DM Initiative workspace: independent view, persistent server state, editable ordering.
 let initiative={board:{entries:[],round:1,activeId:null},revision:0,updated_at:null};
 await dmPage.route('**/rest/v1/rpc/vantyr_initiative_*',async route=>{
@@ -163,12 +172,16 @@ await dmPage.reload({waitUntil:'networkidle'});
 await dmPage.locator('#dmGate').waitFor({state:'visible'});
 assert.equal(await dmPage.locator('#dmDashboard').isVisible(),false,'Revoked DM link must hide old private status');
 assert.match(await dmPage.locator('#dmGateMessage').innerText(),/expired or been revoked/);
+assert.equal(await dmPage.evaluate(()=>localStorage.getItem('vantyr-dm-link')),null,'Revoked invitation should be erased from this device');
+assert.equal(new URL(dmPage.url()).hash,'','Revoked invitation must be removed from the URL');
+
 assert.equal(dmErrors.length,0,'DM page JS errors: '+dmErrors.join('; '));
 await dmPage.close();
 assert.equal(await page.locator('#observerSettingsBtn').count(),1,'Owner DM Sync launcher missing');
 await page.locator('#observerSettingsBtn').click();
 assert.equal(await page.locator('#observerSettings').isVisible(),true,'Owner sync dialog should open');
 assert.equal(await page.locator('#observerSignedOut').isVisible(),true,'Owner sync should be opt-in');
+assert.equal(await page.locator('#observerLinkHint').count(),1,'Owner should have permanent-link guidance');
 await page.locator('#observerClose').click();
 // Stand by the Emperor: always two advantage dice; can assign the other to a named ally.
 await page.locator('.tab-btn[data-tab="combat"]').click();
