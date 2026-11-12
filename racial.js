@@ -16,22 +16,20 @@
     const card=document.querySelector('.movement-compact');if(card)card.dataset.ambient=light;
   }
   function rollInitiative(){
-    // The racial initiative is always rolled with advantage; +25 is Vantyr's fixed modifier.
+    // Stand by the Emperor: always 2d20 with fixed +25, minus exhaustion.
     activeDiceTray='utility';recentDice=[];
     const rolls=[rollDie(20),rollDie(20)];
-    const chosen=Math.max(...rolls);
     const exhaustion=typeof exhaustionLevel==='function'?exhaustionLevel():0;
-    const bonus=25-exhaustion, total=chosen+bonus;
-    const individualTotals=rolls.map(d=>d+bonus);
-    const note=`STAND BY THE EMPEROR · ADVANTAGE\nDie #1: ${rolls[0]} +25${exhaustion?` −${exhaustion} Exhaustion`:''} = ${individualTotals[0]}\nDie #2: ${rolls[1]} +25${exhaustion?` −${exhaustion} Exhaustion`:''} = ${individualTotals[1]}\nVantyr's chosen initiative: ${total}. Either complete total can be assigned to an ally under your table's rule.`;
-    $('initiativeResult').textContent=`D20 #1: ${rolls[0]} ${bonus>=0?'+':'−'} ${Math.abs(bonus)} = ${individualTotals[0]}  |  D20 #2: ${rolls[1]} ${bonus>=0?'+':'−'} ${Math.abs(bonus)} = ${individualTotals[1]}`;
-    setCheckResult('STAND BY THE EMPEROR',chosen,bonus,total,`Roll #1 = ${individualTotals[0]}, Roll #2 = ${individualTotals[1]} (both include +25${exhaustion?` −${exhaustion} Exhaustion`:''}). Share a completed initiative total with an ally.`,'adv',rolls);
+    const bonus=25-exhaustion,totals=rolls.map(n=>n+bonus);
+    const chosen=Math.max(...rolls),total=chosen+bonus;
+    const note='STAND BY THE EMPEROR · ADVANTAGE\n'
+      +'Die #1: '+rolls[0]+' +25'+(exhaustion?' −'+exhaustion+' Exhaustion':'')+' = '+totals[0]+'\n'
+      +'Die #2: '+rolls[1]+' +25'+(exhaustion?' −'+exhaustion+' Exhaustion':'')+' = '+totals[1]+'\n'
+      +'Vantyr initial initiative: '+total+'. Choose which die to keep and optionally share the other.';
+    $('initiativeResult').textContent='Roll 1: '+totals[0]+' · Roll 2: '+totals[1]+' · Choose your initiative…';
+    setCheckResult('STAND BY THE EMPEROR',chosen,bonus,total,'Dual initiative assignment · 2d20 advantage','adv',rolls);
     record(note);
-    const modal=$('rollModal');
-    if(modal){const card=modal.querySelector('.roll-modal-card');if(card){card.classList.remove('hourglass-initiative');void card.offsetWidth;card.classList.add('hourglass-initiative');}
-      const heading=$('modalHeading');if(heading){const graphic=document.createElement('span');graphic.className='initiative-hourglass';graphic.setAttribute('aria-hidden','true');graphic.textContent='⌛';heading.prepend(graphic)}
-      const eq=$('modalEquation');if(eq){const row=document.createElement('div');row.className='initiative-dual-total';individualTotals.forEach((v,i)=>{const tile=document.createElement('div');tile.className='initiative-total-tile';const caption=document.createElement('small');caption.textContent=`ROLL ${i+1} · ${rolls[i]} +25${exhaustion?` −${exhaustion}`:''}`;const num=document.createElement('strong');num.textContent=v;tile.append(caption,num);row.append(tile)});eq.replaceChildren(row)}
-    }
+    document.dispatchEvent(new CustomEvent('vantyr:initiative-rolled',{detail:{rolls,bonus,totals}}));
   }
   function setup(){if(!$('standByEmperorBtn'))return;
     $('standByEmperorBtn').addEventListener('click',rollInitiative);
