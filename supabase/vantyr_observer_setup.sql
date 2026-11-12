@@ -9,8 +9,7 @@
 --  - DM reads only via a 256-bit secret link, checked server-side by RPC;
 --  - the DM cannot write, even with the browser developer tools.
 --
-create schema if not exists extensions;
-create extension if not exists pgcrypto with schema extensions;
+-- PostgreSQL's built-in SHA-256 is used; no additional extension is required.
 
 create table if not exists public.vantyr_observer_config (
   id integer primary key default 1 check (id = 1),
@@ -166,7 +165,7 @@ begin
   select viewer_token_sha256 into v_expected
   from public.vantyr_observer_config where id = 1;
   if v_expected is null
-     or v_expected <> pg_catalog.encode(extensions.digest(p_token, 'sha256'), 'hex') then
+     or v_expected <> pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(p_token, 'UTF8')), 'hex') then
     raise exception 'Invalid or revoked viewer link';
   end if;
   select snapshot, revision, updated_at into v_snapshot, v_revision, v_updated
