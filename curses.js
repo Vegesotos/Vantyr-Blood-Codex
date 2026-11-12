@@ -39,7 +39,7 @@ const CURSES=[
 const curseById=Object.fromEntries(CURSES.map(c=>[c.id,c]));
 const curseDefaults=()=>({charges:4,freeCorrosion:true,squelchingReady:true,silenceReady:true,effects:[],brain:{active:false,amplified:false,turn:1,instances:[],lastBurst:0}});
 let curseData=curseDefaults();try{const stored=JSON.parse(localStorage.getItem(CURSE_SAVE_KEY)||localStorage.getItem(CURSE_PREVIOUS_KEY)||'null');if(stored){curseData={...curseData,...stored,effects:Array.isArray(stored.effects)?stored.effects:[],brain:{...curseData.brain,...stored.brain,instances:Array.isArray(stored.brain?.instances)?stored.brain.instances:[]}};curseData.charges=Math.max(0,Math.min(4,Number(curseData.charges)||0))}}catch(e){console.warn('Curse state unavailable',e)}
-const persistCurses=()=>{try{localStorage.setItem(CURSE_SAVE_KEY,JSON.stringify(curseData))}catch(e){console.warn('Curse save failed',e)}};
+const persistCurses=()=>{try{localStorage.setItem(CURSE_SAVE_KEY,JSON.stringify(curseData));document.dispatchEvent(new Event('vantyr:sync-dirty'))}catch(e){console.warn('Curse save failed',e)}};
 const safeText=(node,text)=>{node.textContent=String(text);return node};
 function curseNote(msg,dice=[]){recentDice=[];dice.forEach(d=>recentDice.push(d));activeDiceTray='utility';record(msg);}
 function curseDie(sides){return 1+Math.floor(Math.random()*sides)}
