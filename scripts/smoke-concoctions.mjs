@@ -95,6 +95,7 @@ dmPage.on('pageerror',e=>dmErrors.push(e.message));
 await dmPage.goto('http://127.0.0.1:8765/dm/',{waitUntil:'networkidle'});
 assert.equal(await dmPage.locator('#dmGate').isVisible(),true,'DM gate should block users without a link');
 assert.equal(await dmPage.locator('#dmDashboard').isVisible(),false,'Private status must remain hidden');
+await dmPage.locator('.dm-manual-entry > summary').click();
 await dmPage.locator('#dmTokenField').fill('not-a-real-token');
 await dmPage.locator('#dmConnect').click();
 assert.match(await dmPage.locator('#dmGateMessage').innerText(),/Invalid private link format/);
