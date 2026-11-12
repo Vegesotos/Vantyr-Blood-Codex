@@ -82,6 +82,27 @@ function snapshot(){
   };
 }
 async function callRpc(name,body,auth=true){return request('/rest/v1/rpc/'+name,{body,auth})}
+async function publishInitiative(assignment){
+  if(!approved||!assignment)return;
+  const body={
+    p_vantyr:Number(assignment.vantyr),p_vantyr_raw:Number(assignment.vantyrRaw),
+    p_ally:assignment.ally||null,
+    p_ally_initiative:assignment.ally?Number(assignment.allyInitiative):null,
+    p_ally_raw:assignment.ally?Number(assignment.allyRaw):null
+  };
+  try{
+    await callRpc('vantyr_initiative_publish',body);
+    status('Character and initiative sharing active','good');
+  }catch(e){
+    status('Initiative sync failed: '+e.message,'bad');
+  }
+}
+async function publishInitiativeLast(){
+  try{
+    const item=JSON.parse(localStorage.getItem('vantyr-last-initiative-assignment-v1')||'null');
+    if(item)await publishInitiative(item);
+  }catch(e){}
+}
 async function claim(){
   if(!session)return;
   try{
@@ -91,6 +112,7 @@ async function claim(){
     $('observerSignedOut').hidden=true;$('observerSignedIn').hidden=false;
     status('Connected · owner authenticated','good');
     await publish();
+    await publishInitiativeLast();
   }catch(err){
     approved=false;
     $('observerSignedOut').hidden=false;$('observerSignedIn').hidden=true;
@@ -170,6 +192,7 @@ function wire(){
     catch(e){$('observerGeneratedLink').select();status('Select and copy the link above.')}
   });
   document.addEventListener('vantyr:sync-dirty',schedulePublish);
+  document.addEventListener('vantyr:initiative-update',e=>{publishInitiative(e.detail).catch(x=>status(x.message,'bad'))});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')$('observerSettings').hidden=true});
   setInterval(()=>{if(approved)publish().catch(e=>status(e.message,'bad'))},Number(cfg.pollIntervalMs)||2500);
   if(session)claim();
