@@ -5,9 +5,9 @@
 <meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="#120e17" name="theme-color"/><title>Vantyr | Character Helper</title>
 <link href="style.css" rel="stylesheet"/><script defer="" src="ascendants.js"></script><script defer="" src="app.js"></script><script defer="" src="curses.js"></script>
-<script defer="" src="layout.js"></script><script defer="" src="spells.js"></script><script defer="" src="racial.js"></script><script defer="" src="vecna.js"></script><script defer="" src="future.js"></script><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="yes" name="mobile-web-app-capable"/><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/><link href="manifest.webmanifest" rel="manifest"/><link href="mobile.css" rel="stylesheet"/><script defer="" src="mobile.js"></script><link href="concoction.css" rel="stylesheet"/><script defer="" src="concoction-data.js"></script><script defer="" src="concoction.js"></script></head>
+<script defer="" src="layout.js"></script><script defer="" src="spells.js"></script><script defer="" src="racial.js"></script><script defer="" src="vecna.js"></script><script defer="" src="future.js"></script><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="yes" name="mobile-web-app-capable"/><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/><link href="manifest.webmanifest" rel="manifest"/><link href="mobile.css" rel="stylesheet"/><script defer="" src="mobile.js"></script><link href="concoction.css" rel="stylesheet"/><script defer="" src="concoction-data.js"></script><script defer="" src="concoction.js"></script><link href="observer-ui.css" rel="stylesheet"/><script defer src="observer-config.js"></script><script defer src="observer-sync.js"></script></head>
 <body><div class="app-shell" id="app">
-<header class="topbar"><div class="brand"><span class="crest">♛</span><div><div class="eyebrow">THE VAMPIRE LORD</div><h1>VANTYR <span class="muted">/ CHARACTER HELPER</span></h1></div></div><div class="top-actions"><span class="small-label" id="saveStatus">Saved locally</span><button class="ghost-btn" id="resetBtn">Reset values</button><button aria-pressed="false" class="developer-toggle" id="developerModeBtn" title="Enable grid editing and drag cards into position" type="button">⚙ Dev Mode</button></div></header><section class="hero panel">
+<header class="topbar"><div class="brand"><span class="crest">♛</span><div><div class="eyebrow">THE VAMPIRE LORD</div><h1>VANTYR <span class="muted">/ CHARACTER HELPER</span></h1></div></div><div class="top-actions"><span class="small-label" id="saveStatus">Saved locally</span><button type="button" id="observerSettingsBtn" class="ghost-btn observer-launch" title="DM live observer sync">◉ DM Sync</button><button class="ghost-btn" id="resetBtn">Reset values</button><button aria-pressed="false" class="developer-toggle" id="developerModeBtn" title="Enable grid editing and drag cards into position" type="button">⚙ Dev Mode</button></div></header><section class="hero panel">
 <div class="hero-identity">
 <div class="portrait-medallion-wrap">
 <div class="portrait-medallion" id="portraitMedallion">
@@ -239,7 +239,7 @@
 <article class="lore-card immunity"><h4>◈ Condition Immunities</h4><div class="lore-tags"><span>Blinded</span><span>Deafened</span><span>Petrified</span><span>Stunned</span></div></article>
 <article class="lore-card resistant-mind"><h4>🛡 Hardened Soul · Level 14</h4><p>Advantage on saving throws against being <strong>Charmed</strong> or <strong>Frightened</strong>. This is advantage, not condition immunity.</p></article><article class="lore-card vulnerability"><h4>☀ Damage Vulnerability</h4><div class="lore-tags"><span>Radiant</span></div><p>Vulnerability doubles damage taken.</p></article></div>
 </section></section>
-<footer>VANTYR — Blood Codex v3.3 · Saved locally · GitHub Pages web edition · Dev Mode layout controls</footer>
+<footer>VANTYR — Blood Codex v3.4 · Saved locally · GitHub Pages web edition · Dev Mode layout controls</footer>
 </div><div aria-hidden="true" class="roll-modal" hidden="" id="rollModal"><div aria-labelledby="modalHeading" aria-modal="true" class="roll-modal-card" role="dialog" tabindex="-1"><button aria-label="Close result" class="roll-modal-close" id="modalClose" type="button">×</button><div class="modal-eyebrow">VANTYR · BLOOD CODEX</div><h2 id="modalHeading">Roll result</h2><div class="modal-equation" id="modalEquation"></div><div class="modal-dice" id="modalDice"></div><p class="modal-description" id="modalDescription"></p><div class="modal-footnote">Click outside the card to close</div></div></div><div aria-hidden="true" class="future-choice-overlay" hidden="" id="futureSetDialog" role="presentation">
 <section aria-describedby="futureChoiceDescription" aria-labelledby="futureChoiceTitle" aria-modal="true" class="future-choice-dialog" role="dialog">
 <div aria-hidden="true" class="future-choice-sigil">◈</div>
@@ -251,4 +251,29 @@
 <button class="future-choice-cancel" id="futureSetNo" type="button">No, save it for later</button>
 </div>
 </section>
-</div></body></html>
+</div><div id="observerSettings" class="observer-overlay" hidden role="presentation">
+<section class="observer-panel" role="dialog" aria-modal="true" aria-labelledby="observerTitle">
+<button type="button" id="observerClose" class="observer-close" aria-label="Close DM synchronization settings">×</button>
+<div class="eyebrow">THE VAMPIRE LORD · DUNGEON MASTER</div>
+<h2 id="observerTitle">◉ DM Observer Sync</h2>
+<p>Allow your Dungeon Master to monitor Vantyr's HP, active Oath Forms, Blood Curses and remaining combat resources. The DM cannot edit your character.</p>
+<div id="observerStatus" role="status">Live connection is off. Your game data still saves on your device.</div>
+<div id="observerSignedOut">
+ <p class="observer-note"><strong>One-time setup:</strong> Run the owner-protected SQL file in your Supabase SQL Editor, configure your Supabase Auth redirect URL, then sign in below. Your DM never needs an account.</p>
+ <label class="observer-label">Your owner email (the one configured in Supabase SQL)
+ <input id="observerEmail" type="email" autocomplete="email" placeholder="your@email.com"/></label>
+ <div class="observer-buttons"><button id="observerSendEmail" type="button" class="gold-btn">✉ Send Sign-in Link</button></div>
+</div>
+<div id="observerSignedIn" hidden>
+ <p id="observerLastSent">Waiting for first sync…</p>
+ <div class="observer-buttons"><button id="observerNewLink" class="gold-btn" type="button">✦ Create / Replace DM Link</button><button id="observerRevoke" class="ghost-btn" type="button">Revoke DM Link</button></div>
+ <div id="observerGeneratedWrap" hidden>
+  <label class="observer-label">Your new private DM link — copy and send it directly to your DM
+   <input id="observerGeneratedLink" readonly type="text" autocomplete="off"/></label>
+  <div class="observer-buttons"><button type="button" id="observerCopy" class="ghost-btn">Copy Private Link</button></div>
+  <p class="observer-note">The link acts as a password. Do not post it publicly. Generating a replacement immediately invalidates the old link.</p>
+ </div>
+ <div class="observer-buttons"><button type="button" id="observerSignOut" class="ghost-btn">Sign Out on This Device</button></div>
+</div>
+<p class="hint">Sync is optional. Vantyr's normal offline HP tracker and other mechanics continue working if the internet is unavailable.</p>
+</section></div></body></html>
