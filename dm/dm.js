@@ -5,6 +5,7 @@
 const cfg=window.VANTYR_OBSERVER_CONFIG;
 const $=id=>document.getElementById(id);
 let token='',lastRevision=-1,lastUpdate=null,inFlight=false;
+const DM_KEY='vantyr-dm-link';
 const pollMs=Number(cfg?.pollIntervalMs)||2500;
 const number=(n,fall=0)=>Number.isFinite(Number(n))?Number(n):fall;
 function text(id,val){const e=$(id);if(e)e.textContent=String(val)}
@@ -71,7 +72,8 @@ async function refresh(){
   }catch(err){
     if(/invalid or revoked viewer link/i.test(err.message)||err.status===403){
       token='';lastRevision=-1;
-      try{sessionStorage.removeItem('vantyr-dm-link')}catch(e){}
+      try{sessionStorage.removeItem(DM_KEY);localStorage.removeItem(DM_KEY)}catch(e){}
+      if(location.hash.includes('token='))history.replaceState(null,'',location.pathname+location.search);
       $('dmDashboard').hidden=true;$('dmGate').hidden=false;
       text('dmGateMessage','This invitation has expired or been revoked. Ask Vantyr’s player for a new private link.');
     }else if($('dmDashboard').hidden){text('dmGateMessage','Could not open observer: '+err.message+'. Ask Vantyr’s player to check the private link and database setup.');}
@@ -79,18 +81,44 @@ async function refresh(){
   }finally{inFlight=false}
 }
 function connect(value){
-  if(!/^[0-9a-f]{64}$/.test(value)){text('dmGateMessage','Invalid private link format. Ask the player to generate a new link.');return;}
-  token=value;try{sessionStorage.setItem('vantyr-dm-link',value)}catch(e){}
-  text('dmGateMessage','Connecting securely…');
+  if(!/^[0-9a-f]{64}$/.test(value)){
+    text('dmGateMessage','Invalid private link. Ask the player for the full invitation URL.');
+    return;
+  }
+  token=value;
+  try{
+    sessionStorage.setItem(DM_KEY,value);
+    localStorage.setItem(DM_KEY,value);
+  }catch(e){}
+  // A fragment never travels to GitHub Pages in the HTTP request.
+  // Keep it visible so the same URL can be copied, bookmarked, or reopened.
+  if(new URLSearchParams(location.hash.slice(1)).get('token')!==value){
+    const url=new URL(location.href);url.hash='token='+value;
+    history.replaceState(null,'',url);
+  }
+  text('dmGateMessage','Checking private invitation…');
   refresh();
 }
 function wire(){
   const hash=new URLSearchParams(location.hash.substring(1));
-  const value=hash.get('token');
-  if(value){history.replaceState(null,'',location.pathname+location.search);connect(value);}
-  else {let previous='';try{previous=sessionStorage.getItem('vantyr-dm-link')||''}catch(e){}
-    if(previous)connect(previous)}
+  const invitation=hash.get('token');
+  if(invitation){connect(invitation)}
+  else {
+    let previous='';
+    try{previous=localStorage.getItem(DM_KEY)||sessionStorage.getItem(DM_KEY)||''}catch(e){}
+    if(previous)connect(previous);
+    else text('dmGateMessage','No private invitation found. Use the full link shared by Vantyr’s player.');
+  }
   $('dmConnect').addEventListener('click',()=>connect($('dmTokenField').value.trim()));
+  const forget=$('dmForgetDevice');
+  if(forget)forget.addEventListener('click',()=>{
+    token='';lastRevision=-1;lastUpdate=null;
+    try{sessionStorage.removeItem(DM_KEY);localStorage.removeItem(DM_KEY)}catch(e){}
+    history.replaceState(null,'',location.pathname+location.search);
+    $('dmDashboard').hidden=true;$('dmGate').hidden=false;
+    $('dmTokenField').value='';
+    text('dmGateMessage','Private invitation forgotten on this device. You can reopen the full invitation link at any time.');
+  });
   setInterval(()=>{if(token)refresh()},pollMs);
   setInterval(statusAge,1000);
 }
