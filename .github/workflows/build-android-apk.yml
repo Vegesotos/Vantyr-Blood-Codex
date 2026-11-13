@@ -22,8 +22,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      # GitHub hosted Ubuntu runners include ANDROID_HOME and sdkmanager.
+      # Avoid setup-android@v3, which tries to install removed 'tools' package.
       - name: Install Android API 35
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - name: Set up Gradle 8.9
