@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const html=fs.readFileSync('index.html','utf8');
-const assets=['app.js','ascendants.js','curses.js','layout.js','spells.js','racial.js','vecna.js','future.js','mobile.js','concoction-data.js','concoction.js','observer-config.js','observer-sync.js','style.css','mobile.css','concoction.css','observer-ui.css','initiative-share.js','initiative-share.css','settings.js','settings.css'];
+const assets=['app.js','ascendants.js','curses.js','layout.js','spells.js','racial.js','vecna.js','future.js','mobile.js','concoction-data.js','concoction.js','observer-config.js','observer-sync.js','style.css','mobile.css','concoction.css','observer-ui.css','initiative-share.js','initiative-share.css','settings.js','settings.css','phase1.js','phase1.css'];
 for(const name of assets){
  assert(fs.existsSync(name),'Missing '+name);
  assert(html.includes(name),'Script or style not loaded: '+name);
@@ -20,6 +20,13 @@ for(const id of ['codexSettings','observerSettingsBtn','developerModeBtn','reset
  assert(seen.has(id),'Missing Settings menu control '+id);
 }
 assert(html.includes('class="codex-settings"'),'Settings should be a unified dropdown');
+for(const id of ['phase1Dashboard','phase1BottomNav','p1HpText','p1Ac','p1CombatToggle','p1NextTurn','p1MoreMenu']){
+ assert(seen.has(id),'Missing Phase 1 dashboard control: '+id);
+}
+const phase1=fs.readFileSync('phase1.js','utf8');
+assert(phase1.includes("originalClick('combatBtn')"),'Mobile combat action must proxy original combat engine');
+assert(phase1.includes("originalClick('endTurnBtn')"),'Mobile end turn action must proxy original turn engine');
+
 const concoctionJS=fs.readFileSync('concoction.js','utf8');
 assert(concoctionJS.includes("document.addEventListener('pointerdown'"),'Concoction suggestions must support outside tap dismissal');
 const dmInitiativeHTML=fs.readFileSync('dm/index.html','utf8');
