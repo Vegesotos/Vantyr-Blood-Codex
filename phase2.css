@@ -95,3 +95,24 @@
 @media(prefers-reduced-motion:reduce){
  #tab-combat .button-row button,#tab-combat .rollmode label{transition:none!important}
 }
+
+/* Phase 2 visibly extends to the landing command deck, even when weapons are folded. */
+.phase1-dashboard{border:1px solid #a86c7c!important;background:radial-gradient(circle at 92% 0%,#8b3b526a,transparent 45%),radial-gradient(circle at 0% 100%,#5c2d675c,transparent 60%),linear-gradient(130deg,#2b1527,#130d1b 78%)!important;box-shadow:0 18px 52px #0009,inset 0 1px #ffe8cd23!important}
+.phase1-dashboard .p1-kicker:after{content:'  ·  PHASE II';color:#f3c88f;font-weight:900;letter-spacing:.12em}
+.phase1-dashboard .p1-title h2{color:#ffe7c8;text-shadow:0 4px 22px #a7496270}
+.phase1-dashboard .p1-vitals{border-color:#925c72;box-shadow:inset 0 1px #ffffff13;background:linear-gradient(135deg,#3b1e32,#1d1524)}
+.phase1-dashboard .p1-stats>div{border-color:#7c5066;background:linear-gradient(145deg,#3b2637,#241827)}
+.phase1-dashboard .p1-stats strong{color:#ffe0b3}
+.phase1-dashboard .p1-action{border-color:#bc6981;background:linear-gradient(135deg,#8a3c58,#48243c);box-shadow:0 6px 19px #0006,inset 0 1px #ffffff18;transition:transform .14s,filter .14s}
+.phase1-dashboard .p1-action-alt{border-color:#9e81bd;background:linear-gradient(135deg,#624577,#34233e)}
+.phase1-dashboard .p1-action:hover{filter:brightness(1.16);transform:translateY(-2px)}
+.phase1-dashboard .p1-action:active{transform:translateY(1px)}
+.phase1-dashboard .p1-combat-toggle{background:linear-gradient(120deg,#a54e62,#6e314b);border-color:#d18b94;box-shadow:inset 0 1px #ffffff1d}
+.phase1-dashboard .p1-next-turn{background:linear-gradient(120deg,#57415c,#30223a);border-color:#98728f}
+.phase1-mobile-nav{border-color:#a1677a!important;box-shadow:0 10px 32px #0009!important}
+.phase1-mobile-nav .p1-tab.selected{background:linear-gradient(145deg,#8c4159,#44263e)!important;border-color:#c07891!important;color:#fff0dc!important}
+#tab-combat .weapon-section,#tab-combat .martyr-section{scroll-margin-top:100px}
+@keyframes p2-spotlight{0%{box-shadow:0 0 0 3px #f9c886,0 0 28px #e9ac766e}100%{box-shadow:0 0 0 0 #f9c88600,0 13px 32px #0005}}
+#tab-combat .p2-jump-highlight{animation:p2-spotlight 1.5s ease-out}
+@media(max-width:760px){#tab-combat .weapon-section,#tab-combat .martyr-section{scroll-margin-top:20px}}
+@media(prefers-reduced-motion:reduce){#tab-combat .p2-jump-highlight{animation:none;outline:2px solid #f9c886}}
