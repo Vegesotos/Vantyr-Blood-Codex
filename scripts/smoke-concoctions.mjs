@@ -20,6 +20,7 @@ assert.equal(await page.locator('#phase1BottomNav').isVisible(),true,'Phase 1 bo
 assert.match(await page.locator('#p1HpText').innerText(),/178/,'Vitality should mirror the existing character sheet');
 assert.equal(await page.locator('#p1NextTurn').isDisabled(),true,'End turn should be disabled outside combat');
 await page.locator('#p1CombatToggle').click();
+if(await page.locator('#futureSetDialog').isVisible())await page.locator('#futureSetNo').click();
 assert.equal(await page.locator('#p1NextTurn').isEnabled(),true,'Dashboard start combat must trigger original combat engine');
 await page.locator('#p1NextTurn').click();
 assert.match(await page.locator('#p1Turn').innerText(),/2/,'Dashboard end turn should advance the original turn counter');
