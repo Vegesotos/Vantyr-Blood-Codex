@@ -129,8 +129,7 @@ function toggle(which){
 function setup(){
  $('dmGoInitiative').addEventListener('click',()=>toggle('board'));
  $('dmGoCharacter').addEventListener('click',()=>toggle('character'));
- $('initiativeAddBtn').addEventListener('click',add);
- $('initiativeAddName').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();add()}});
+ $('initiativeAddForm').addEventListener('submit',e=>{e.preventDefault();add()});
  $('initiativeNext').addEventListener('click',changeTurn);
  $('initiativeResetTurn').addEventListener('click',()=>mutate(b=>{b.round=1;b.activeId=null}));
  $('initiativeClear').addEventListener('click',()=>{
