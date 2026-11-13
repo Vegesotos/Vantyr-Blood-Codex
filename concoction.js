@@ -215,6 +215,20 @@
   }
   function wire(){
     initFilters();renderRecipes();renderInventory();syncLab();wireInspiration();
+    // Hide autocomplete overlays on any outside tap/click without erasing a search.
+    // Clicking the input again reopens matching suggestions for the existing text.
+    for(const [inputId,boxId] of [['ccSearch','ccSuggestions'],['ccCraftFind','ccCraftSuggestions']]){
+      const input=$(inputId),box=$(boxId);
+      input.addEventListener('focus',()=>{if(input.value.trim())suggestions(inputId,boxId,'focus')});
+      input.addEventListener('keydown',e=>{if(e.key==='Escape'){box.hidden=true;input.blur()}});
+    }
+    document.addEventListener('pointerdown',e=>{
+      for(const [inputId,boxId] of [['ccSearch','ccSuggestions'],['ccCraftFind','ccCraftSuggestions']]){
+        const input=$(inputId),box=$(boxId);
+        if(!input.contains(e.target)&&!box.contains(e.target))box.hidden=true;
+      }
+    });
+
     $('ccLab').addEventListener('change',e=>{save.lab=e.target.checked;persist();syncLab();craftingSummary()});
     $('ccMute').checked=!!save.mute;
     $('ccMute').addEventListener('change',e=>{save.mute=e.target.checked;persist()});
