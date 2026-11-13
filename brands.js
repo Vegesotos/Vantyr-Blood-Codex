@@ -83,6 +83,7 @@
     el('brandResultKicker').textContent=kicker;
     el('brandResultTitle').textContent=title;
     const faces=el('brandResultFaces');faces.replaceChildren();
+    if(!dice.length&&total!==null){const face=document.createElement('div');face.className='brand-die';face.style.setProperty('--i','0');const n=document.createElement('strong');n.textContent=String(total);const l=document.createElement('small');l.textContent='FLAT';face.append(n,l);faces.append(face)}
     dice.forEach((value,index)=>{
       const face=document.createElement('div');face.className='brand-die';
       const number=document.createElement('strong');number.textContent=value;
@@ -101,7 +102,7 @@
   };
   const stunnedInfo=(name,reason)=>{
     const detail=name+' is STUNNED until the end of Vantyr\'s next turn. '+reason+
-      '\\n\\nSTUNNED (D&D 5e 2014): Incapacitated (cannot take actions or reactions), cannot move, and can speak only falteringly. Automatically fails Strength and Dexterity saving throws. Attack rolls against it have advantage. Stunned does NOT grant automatic critical hits.';
+      '\n\nSTUNNED (D&D 5e 2014): Incapacitated (cannot take actions or reactions), cannot move, and can speak only falteringly. Automatically fails Strength and Dexterity saving throws. Attack rolls against it have advantage. Stunned does NOT grant automatic critical hits.';
     event(name+' FAILED Brand of Axiom WIS save · STUNNED until the end of Vantyr\'s next turn.');
     feedback(detail);
     openResult({title:name+' — STUNNED',kicker:'BRAND OF AXIOM · FAILED WIS SAVE',details:detail,actions:[{label:'Understood',primary:true}]});
