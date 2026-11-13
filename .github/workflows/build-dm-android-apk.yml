@@ -1,0 +1,52 @@
+name: Build VANTYR DM Companion APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'android/dm-app/**'
+      - 'android/settings.gradle'
+      - '.github/workflows/build-dm-android-apk.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  dm-companion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Android API 35
+        run: |
+          export ANDROID_HOME=/usr/local/lib/android/sdk
+          export ANDROID_SDK_ROOT="$ANDROID_HOME"
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -type f | head -n 1)"
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0"
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Build independent DM Companion APK
+        working-directory: android
+        run: gradle --no-daemon --stacktrace :dm-app:assembleDebug
+      - name: Validate DM app package
+        run: |
+          test -s android/dm-app/build/outputs/apk/debug/dm-app-debug.apk
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging android/dm-app/build/outputs/apk/debug/dm-app-debug.apk | grep "package: name='com.vantyr.dmcompanion'"
+          sha256sum android/dm-app/build/outputs/apk/debug/dm-app-debug.apk
+      - name: Upload installable DM Companion APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: VANTYR-DM-Companion-v1.0-Live-APK
+          path: android/dm-app/build/outputs/apk/debug/dm-app-debug.apk
+          if-no-files-found: error
+          retention-days: 90
