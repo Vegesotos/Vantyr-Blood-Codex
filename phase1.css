@@ -1,0 +1,71 @@
+/* VANTYR Phase 1 · Mobile Combat Command Deck */
+.phase1-dashboard,.phase1-mobile-nav{display:none}
+@media(max-width:760px){
+ html{scroll-padding-bottom:112px}
+ .app-shell{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))!important}
+ .app-shell>.chapter-nav{display:none!important}
+ .app-shell>.tab-nav{display:none!important}
+ .app-shell>.hero{margin-bottom:8px!important}
+ .app-shell>.hero .hero-copy p,.app-shell>.hero .hero-tags{display:none}
+ .app-shell>.hero .hero-copy h2{font-size:15px!important}
+ .app-shell>.hero .hero-copy .eyebrow{font-size:8px}
+ .app-shell>.hero .portrait-medallion{width:59px!important;height:59px!important}
+ .app-shell>.hero .portrait-caption{font-size:8px}
+ .app-shell>.hero .hero-identity{gap:8px}
+ .app-shell>.hero .cc-inspiration{margin-top:4px}
+ .app-shell>.hero .mode-box{padding:8px!important}
+ .app-shell>.hero .mode-box .combat-actions{display:none}
+ .app-shell>.hero .mode-box #combatStatus{font-size:9px}
+ .phase1-dashboard{display:grid;gap:12px;position:relative;overflow:hidden;margin:0 0 12px;padding:17px 14px 13px;border-radius:19px;border:1px solid #704055;background:radial-gradient(ellipse at 82% -10%,#60243b90,transparent 58%),linear-gradient(150deg,#23121f,#110d17 75%);box-shadow:inset 0 1px #f7c9d026,0 14px 30px #0007;color:#fbe9e6}
+ .phase1-dashboard:before{content:'';position:absolute;right:-29px;top:-40px;width:130px;height:130px;border:1px solid #ba728333;border-radius:50%;box-shadow:0 0 0 13px #b0687920,0 0 0 26px #b068790c;pointer-events:none}
+ .p1-hero{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;position:relative}
+ .p1-kicker{font-size:9px;color:#d9a6b4;letter-spacing:.14em;font-weight:800}
+ .p1-title h2{font:600 27px Georgia,serif;letter-spacing:.18em;margin:2px 0;color:#ffdfce;text-shadow:0 0 17px #9c365367}
+ .p1-roman{font:500 12px system-ui;color:#c6a0b3;letter-spacing:0}
+ .p1-form{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.08em;color:#eac0bf;background:#5d2337;border:1px solid #aa6781;border-radius:20px;padding:5px 9px}
+ .p1-turn{display:grid;justify-items:center;min-width:57px;gap:0;padding:7px;background:#2d1b2b;border:1px solid #694257;border-radius:12px}
+ .p1-turn span,.p1-caption{font-size:9px;letter-spacing:.1em;color:#caa6b5;font-weight:800}
+ .p1-turn strong{font:700 25px Georgia,serif;color:#eec59a}
+ .p1-vitals{background:linear-gradient(135deg,#271725,#1b1420);border:1px solid #63374a;border-radius:14px;padding:13px 14px;display:grid;gap:9px}
+ .p1-hp-head{display:flex;justify-content:space-between;align-items:end}
+ .p1-hp-head>div:first-child{display:grid;gap:1px}
+ #p1HpText{font:700 32px Georgia,serif;color:#fff3e7}
+ #p1HpText small{font:500 14px system-ui;color:#bda3b2}
+ .p1-ac{display:grid;gap:1px;justify-items:end}
+ .p1-ac span{font-size:9px;color:#baa0ae;font-weight:800;letter-spacing:.06em}
+ .p1-ac strong{font:700 24px Georgia,serif;color:#f7d29e}
+ .p1-track{width:100%;height:11px;background:#100d15;border:1px solid #583044;border-radius:20px;overflow:hidden}
+ .p1-fill{height:100%;background:linear-gradient(90deg,#85344e,#d96c87);border-radius:20px;transition:width .28s ease}
+ .p1-low-health .p1-fill{background:linear-gradient(90deg,#8d281e,#ff624b)}
+ .p1-vitals-foot{display:flex;justify-content:space-between;gap:7px;font-size:10px;color:#d6b3c6}
+ #p1CombatState{color:#eec69c;font-weight:800}
+ .p1-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ .p1-stats>div{display:grid;justify-items:center;gap:4px;padding:10px 3px;background:#2a1b29;border:1px solid #58344a;border-radius:11px;min-width:0}
+ .p1-stats span{font:750 9px system-ui;color:#bda8b6;letter-spacing:.07em}
+ .p1-stats strong{font:700 18px Georgia,serif;color:#ffdfc1}
+ .p1-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .p1-action{border:1px solid #9c4a62;border-radius:13px;display:grid;justify-items:center;gap:4px;min-height:87px;padding:12px 5px;background:linear-gradient(130deg,#6b253e,#371a2c);color:#ffe4d9}
+ .p1-action-alt{background:linear-gradient(130deg,#422c52,#241929);border-color:#77597e}
+ .p1-action-glyph{font-size:20px;line-height:1}
+ .p1-action strong{font-size:12px;letter-spacing:.1em}
+ .p1-action small{font-size:8px;color:#ddbac6;letter-spacing:.07em}
+ .p1-controls{display:grid;grid-template-columns:1.15fr 1fr;gap:8px}
+ .p1-controls button{min-height:46px;border-radius:11px;font-size:11px;font-weight:800;letter-spacing:.03em}
+ .p1-combat-toggle{color:#ffe6cb;background:#74344a;border:1px solid #b36679}
+ .p1-next-turn{color:#ffdfbb;background:#3b293b;border:1px solid #8c6177}
+ .p1-next-turn:disabled{opacity:.38}
+ .p1-hint{text-align:center;color:#a991a9;font-size:9px}
+ .phase1-dashboard.p1-emperor{border-color:#b67c6b;box-shadow:inset 0 1px #ffe1bb40,0 14px 40px #67233b55}
+ .phase1-dashboard.p1-emperor .p1-form{color:#fff3cf;background:#774a31;border-color:#e2ac72}
+ .phase1-mobile-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;bottom:0;left:0;right:0;z-index:210;background:linear-gradient(170deg,#281425,#100c16);border-top:1px solid #8a5064;padding:7px 6px calc(8px + env(safe-area-inset-bottom,0px));gap:3px;box-shadow:0 -12px 29px #000b}
+ .phase1-mobile-nav .p1-tab{min-width:0;min-height:56px;display:grid;justify-items:center;align-content:center;gap:4px;background:transparent;border:1px solid transparent;border-radius:11px;color:#b7a5b7;font-size:10px;font-weight:750;padding:5px 2px}
+ .p1-tab .p1-tab-icon{font-size:21px;line-height:1}
+ .phase1-mobile-nav .p1-tab.selected{color:#fce4d8;border-color:#84445a;background:linear-gradient(155deg,#5e2944,#352034)}
+ .p1-more-menu{position:absolute;bottom:calc(100% + 8px);right:8px;width:min(236px,calc(100vw - 16px));padding:10px;background:#251521;border:1px solid #a26077;border-radius:14px;box-shadow:0 17px 45px #000e;display:grid;gap:6px}
+ .p1-more-menu[hidden]{display:none!important}
+ .p1-more-menu button{display:flex;align-items:center;gap:9px;background:#362138;color:#f8deda;border:1px solid #674052;padding:13px 12px;border-radius:9px;text-align:left;font-size:13px;font-weight:700;min-height:46px}
+ .p1-more-menu button.selected{background:#623249;border-color:#ae7b90}
+ #tab-combat>.hp-panel{margin-top:2px}
+ #tab-combat>.hp-panel .section-head h3{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){.p1-fill{transition:none!important}}
