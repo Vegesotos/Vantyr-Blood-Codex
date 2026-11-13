@@ -27,6 +27,7 @@ await page.locator('#p1NextTurn').click();
 assert.match(await page.locator('#p1Turn').innerText(),/2/,'Dashboard end turn should advance the original turn counter');
 if(await page.locator('#rollModal').isVisible())await page.locator('#modalClose').click();
 await page.locator('#p1CombatToggle').click();
+if(await page.locator('#rollModal').isVisible())await page.locator('#modalClose').click();
 assert.equal(await page.locator('#p1NextTurn').isDisabled(),true);
 assert.equal(await page.locator('#codexSettings').evaluate(x=>x.open),false);
 await page.locator('#codexSettings > summary').click();
