@@ -5,7 +5,26 @@ const page=await browser.newPage({viewport:{width:390,height:844}});
 const errors=[];
 page.on('pageerror',e=>errors.push(e.message));
 await page.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
+async function selectMobileTab(tab){
+  const target=page.locator('#phase1BottomNav [data-go-tab="'+tab+'"]');
+  if(['curses','spells','inventory'].includes(tab)){
+    await page.locator('#p1More').click();
+  }
+  await target.click();
+  await page.locator('#tab-'+tab).waitFor({state:'visible'});
+}
+
 // Settings must be accessible on mobile without scattering risky controls.
+assert.equal(await page.locator('#phase1Dashboard').isVisible(),true,'Phase 1 combat dashboard should show on mobile');
+assert.equal(await page.locator('#phase1BottomNav').isVisible(),true,'Phase 1 bottom navigation should show');
+assert.match(await page.locator('#p1HpText').innerText(),/178/,'Vitality should mirror the existing character sheet');
+assert.equal(await page.locator('#p1NextTurn').isDisabled(),true,'End turn should be disabled outside combat');
+await page.locator('#p1CombatToggle').click();
+assert.equal(await page.locator('#p1NextTurn').isEnabled(),true,'Dashboard start combat must trigger original combat engine');
+await page.locator('#p1NextTurn').click();
+assert.match(await page.locator('#p1Turn').innerText(),/2/,'Dashboard end turn should advance the original turn counter');
+await page.locator('#p1CombatToggle').click();
+assert.equal(await page.locator('#p1NextTurn').isDisabled(),true);
 assert.equal(await page.locator('#codexSettings').evaluate(x=>x.open),false);
 await page.locator('#codexSettings > summary').click();
 assert.equal(await page.locator('#resetBtn').isVisible(),true,'Reset Values must be accessible on mobile');
@@ -30,13 +49,13 @@ assert.equal(await page.locator('#tab-combat #paralysisDistance').count(),1,'Par
 assert.equal(await page.locator('#tab-combat #targetIsParalyzed').count(),1,'Paralysis target must not be duplicated');
 await page.locator('.cc-weapons-fold').first().locator(':scope > summary').click();
 assert.equal(await page.locator('#combatWeapons').isVisible(),true);
-await page.locator('.tab-btn[data-tab="rolls"]').click();
+await selectMobileTab('rolls');
 assert.equal(await page.locator('#ccSavingFold').evaluate(x=>x.open),false);
 await page.locator('#ccSavingFold > summary').click();
 assert.equal(await page.locator('#saves').isVisible(),true);
 await page.locator('#skillsSection > summary').click();
 assert.equal(await page.locator('#skills').isVisible(),true);
-await page.locator('.tab-btn[data-tab="concoction"]').click();
+await selectMobileTab('concoction');
 await page.locator('#ccResultCount').waitFor();
 const count=await page.locator('#ccResultCount').innerText();
 assert.equal(count,'169 recipes');
@@ -72,7 +91,7 @@ await page.locator('#ccArcanaRoll').click();
 await page.locator('#ccMedicineRoll').click();
 await page.locator('#ccFinishDialog').waitFor({state:'visible'});
 await page.locator('#ccFinishAdd').click();
-await page.locator('.tab-btn[data-tab="inventory"]').click();
+await selectMobileTab('inventory');
 assert.match(await page.locator('#ccBagCount').innerText(),/items/);
 await page.locator('#ccBagOpen').click();
 assert.equal(await page.locator('#ccBagContents').isVisible(),true);
@@ -93,14 +112,14 @@ await page.locator('#ccEditQuantity').fill('3');
 await page.locator('#ccEditNote').fill('DM says it glows red');
 await page.locator('#ccEditForm button[type="submit"]').click();
 await page.reload({waitUntil:'networkidle'});
-await page.locator('.tab-btn[data-tab="inventory"]').click();
+await selectMobileTab('inventory');
 await page.locator('#ccBagOpen').click();
 assert.equal(await page.locator('#ccGoldAmount').innerText(),'145');
 assert.match(await page.locator('#ccBagList').innerText(),/×3/);
 const persistedItem=page.locator('.cc-bag-item').filter({hasText:'Potion of Healing'}).first();
 await persistedItem.locator('summary').click();
 assert.match(await persistedItem.innerText(),/DM says it glows red/);
-await page.locator('.tab-btn[data-tab="combat"]').click();
+await selectMobileTab('combat');
 await page.locator('#ccInspPlus').click();
 await page.locator('#ccInspPlus').click();
 assert.match(await page.locator('#ccInspTotal').innerText(),/2 \/ 10/);
@@ -208,7 +227,7 @@ assert.equal(await page.locator('#observerSignedOut').isVisible(),true,'Owner sy
 assert.equal(await page.locator('#observerLinkHint').count(),1,'Owner should have permanent-link guidance');
 await page.locator('#observerClose').click();
 // Stand by the Emperor: always two advantage dice; can assign the other to a named ally.
-await page.locator('.tab-btn[data-tab="combat"]').click();
+await selectMobileTab('combat');
 await page.locator('#standByEmperorBtn').click();
 assert.equal(await page.locator('#emperorShareDialog').isVisible(),true,'Initiative assignment prompt must open');
 assert.equal(await page.locator('.emperor-die-choice').count(),2,'Two rolled d20 faces required');
