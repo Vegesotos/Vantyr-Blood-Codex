@@ -1,0 +1,17 @@
+/* Blood Codex · compact Settings dropdown, desktop and mobile */
+.top-actions{position:relative}
+.codex-settings{position:relative;flex:none;z-index:130}
+.codex-settings>summary::-webkit-details-marker{display:none}
+.codex-settings>summary{list-style:none}
+.codex-settings-toggle{display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;min-width:44px;min-height:43px;border-radius:11px;background:linear-gradient(115deg,#58243c,#2c182b);border:1px solid #aa6f83;color:#f9e2dc;padding:8px 12px;font:700 12px system-ui;letter-spacing:.03em}
+.codex-settings-toggle svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.codex-settings[open] .codex-settings-toggle{border-color:#f6c69b;background:#74334c}
+.codex-settings-toggle:focus-visible{outline:2px solid #f3b692;outline-offset:3px}
+.codex-settings-menu{position:absolute;right:0;top:calc(100% + 9px);z-index:300;width:min(280px,calc(100vw - 24px));display:grid;gap:5px;padding:13px;border:1px solid #9b6175;border-radius:15px;background:linear-gradient(145deg,#321b2b,#17101d);box-shadow:0 20px 50px #000c}
+.codex-settings-heading{font:800 10px system-ui;letter-spacing:.14em;color:#d7a5b0;padding:4px 8px 7px}
+.codex-settings-action,.top-actions #resetBtn,.top-actions #developerModeBtn,.top-actions #observerSettingsBtn{display:flex!important;align-items:center;gap:12px;justify-content:flex-start;width:100%;min-height:43px;margin:0;padding:10px 12px;border-radius:9px;border:1px solid transparent;background:transparent;color:#f3d6d5;font:700 13px system-ui!important;letter-spacing:0;text-align:left;white-space:nowrap}
+.codex-settings-action:hover,.codex-settings-action:focus-visible{background:#562c40!important;border-color:#9b6578!important;outline:none}
+.codex-settings-action[aria-pressed="true"]{background:#5c3547!important;color:#ffe2b3!important}
+.codex-settings-divider{height:1px;background:#654051;margin:3px 0}
+.codex-settings-danger{color:#ffc0bc!important}
+@media(max-width:760px){.codex-settings-toggle{padding:8px;min-width:43px;min-height:43px}.codex-settings-toggle span{display:none}.codex-settings-menu{position:absolute;right:0;top:calc(100% + 6px)}}
