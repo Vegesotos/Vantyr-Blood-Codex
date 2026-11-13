@@ -21,9 +21,11 @@ assert.match(await page.locator('#p1HpText').innerText(),/178/,'Vitality should 
 assert.equal(await page.locator('#p1NextTurn').isDisabled(),true,'End turn should be disabled outside combat');
 await page.locator('#p1CombatToggle').click();
 if(await page.locator('#futureSetDialog').isVisible())await page.locator('#futureSetNo').click();
+if(await page.locator('#rollModal').isVisible())await page.locator('#modalClose').click();
 assert.equal(await page.locator('#p1NextTurn').isEnabled(),true,'Dashboard start combat must trigger original combat engine');
 await page.locator('#p1NextTurn').click();
 assert.match(await page.locator('#p1Turn').innerText(),/2/,'Dashboard end turn should advance the original turn counter');
+if(await page.locator('#rollModal').isVisible())await page.locator('#modalClose').click();
 await page.locator('#p1CombatToggle').click();
 assert.equal(await page.locator('#p1NextTurn').isDisabled(),true);
 assert.equal(await page.locator('#codexSettings').evaluate(x=>x.open),false);
