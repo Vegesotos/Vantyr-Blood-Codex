@@ -218,8 +218,8 @@ function activateConfirmedRite(key,r){
  // and intentionally does not call incoming-damage resistance/healing.
  const info=RITE_WEAPON_NAMES[key]+' · '+RITE_TYPES[r.type].name;
  const message='🩸 CRIMSON RITE ACTIVATED — '+info+
-   '\\nHemocraft die 1d8 = '+cost+' HP cost.'+
-   '\\nCurrent HP: '+previousHp+' → '+afterHp+
+   '\nHemocraft die 1d8 = '+cost+' HP cost.'+
+   '\nCurrent HP: '+previousHp+' → '+afterHp+
    (cost>previousHp?' (HP cannot fall below 0)':'')+
    '. Temporary HP unchanged.';
  record(message);
@@ -354,7 +354,7 @@ setupWeapon();setupMartyr();setupRites();setupBite();setupUtility();setupIncomin
 function showResultPopup(message,dice,attack,check){
  const overlay=el('rollModal'),heading=el('modalHeading'),eq=el('modalEquation'),dieBox=el('modalDice'),description=el('modalDescription');
  if(!overlay)return;
- const source=(currentActionButton?.textContent||'Roll').trim();heading.textContent=check?.label || source || 'Result';
+ const source=(currentActionButton?.textContent||'Roll').trim();heading.textContent=String(message).includes('CRIMSON RITE ACTIVATED')?'Crimson Rite · HP Activation Cost':(check?.label || source || 'Result');
  eq.replaceChildren();dieBox.replaceChildren();overlay.querySelectorAll('.future-roll-actions').forEach(node=>node.remove());
  const result=attack||check;
  if(result){
