@@ -200,6 +200,7 @@ assert.equal(new URL(dmPage.url()).hash,'','Revoked invitation must be removed f
 assert.equal(dmErrors.length,0,'DM page JS errors: '+dmErrors.join('; '));
 await dmPage.close();
 assert.equal(await page.locator('#observerSettingsBtn').count(),1,'Owner DM Sync launcher missing');
+await page.locator('#codexSettings > summary').click();
 await page.locator('#observerSettingsBtn').click();
 assert.equal(await page.locator('#observerSettings').isVisible(),true,'Owner sync dialog should open');
 assert.equal(await page.locator('#observerSignedOut').isVisible(),true,'Owner sync should be opt-in');
