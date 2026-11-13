@@ -83,3 +83,7 @@ footer{text-align:center;font-size:10px;color:#987f90;margin:25px auto;letter-sp
 .dm-viewer-tools{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;color:#bfa2b0;font-size:11px}
 .dm-viewer-tools button{color:#eac1c5;background:#271827;border:1px solid #774659;border-radius:9px;cursor:pointer;padding:7px 10px;font-size:11px;font-weight:650}
 .dm-viewer-tools button:hover{background:#49273b}
+
+/* DM Companion: private invite paste for installed iOS/Android clients */
+.dm-gate-help{font-size:12px!important;line-height:1.5;color:#c5a5b5!important;margin:9px 0 0}
+.dm-manual-entry input{min-width:0;width:100%;font-size:13px}
