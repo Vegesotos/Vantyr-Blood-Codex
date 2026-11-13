@@ -4,6 +4,11 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta name="theme-color" content="#180f18"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="VANTYR DM"/>
+<link rel="manifest" href="manifest.webmanifest"/>
+<link rel="apple-touch-icon" href="../assets/icon-192.png"/>
 <title>VANTYR · Dungeon Master's Observer</title>
 <link rel="stylesheet" href="dm.css"/><link rel="stylesheet" href="initiative.css"/>
 <script defer src="../observer-config.js"></script>
@@ -17,8 +22,9 @@
   <h1>Dungeon Master's Observer</h1>
   <p>Open your <strong>full private invitation URL</strong> from Vantyr's player. Bookmark that link to come back whenever you like. You won't need an account or a code.</p>
   <p id="dmGateMessage" class="dm-error" aria-live="polite">This public preview does not contain your private invitation.</p>
-  <details class="dm-manual-entry"><summary>Have an invitation code instead?</summary>
-    <label>Private invitation code <input id="dmTokenField" type="password" placeholder="Paste your private code" autocomplete="off" spellcheck="false"/></label>
+  <details class="dm-manual-entry"><summary>Connect with your private invitation</summary>
+    <label>Full private DM link (or invitation code) <input id="dmTokenField" type="text" placeholder="Paste full invitation link or code" autocomplete="off" spellcheck="false" autocapitalize="off"/></label>
+    <p class="dm-gate-help">On iPhone: install this dashboard with Safari’s Add to Home Screen, then paste your invitation here once. The app remembers it.</p>
     <button id="dmConnect">Open Observer</button>
   </details>
   <small>Your DM invitation remains valid until Vantyr's player revokes or replaces it.</small>
