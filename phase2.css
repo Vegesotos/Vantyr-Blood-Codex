@@ -1,0 +1,97 @@
+/* VANTYR PHASE 2 · Combat surface / tactile controls · UI ONLY */
+:root{--p2-gold:#e5bf89;--p2-ink:#0f0b12;--p2-blood:#a54662;--p2-focus:#f5d6a5}
+#tab-combat{--p2-edge:#684356}
+#tab-combat .panel{border-color:var(--p2-edge);box-shadow:inset 0 1px 0 #ffffff0a,0 13px 32px #0005}
+#tab-combat .section-head{gap:14px}
+#tab-combat .section-head h3{letter-spacing:.06em;line-height:1.25}
+#tab-combat .section-head .eyebrow{color:#d49cae}
+#tab-combat .section-head .hint{max-width:65ch;line-height:1.5}
+#tab-combat .weapon-section,#tab-combat .martyr-section,#tab-combat .fangs-section,#tab-combat .rite-panel{
+ position:relative;isolation:isolate;overflow:hidden;
+ background:radial-gradient(ellipse at 100% 0%,#69304732,transparent 52%),linear-gradient(145deg,#251a2b,#15111c 80%);
+ border:1px solid #805068;border-radius:20px;
+}
+#tab-combat .weapon-section:before,#tab-combat .martyr-section:before,#tab-combat .fangs-section:before{
+ content:'';position:absolute;inset:0 auto 0 0;width:3px;
+ background:linear-gradient(#e6b77e,#a03d60 65%,transparent);pointer-events:none;z-index:1
+}
+#tab-combat .martyr-section{background:radial-gradient(ellipse at 100% 0%,#47305b55,transparent 52%),linear-gradient(145deg,#241c2d,#15111c 80%);border-color:#6b547d}
+#tab-combat .martyr-section:before{background:linear-gradient(#cda7ef,#7757ac,transparent)}
+#tab-combat .fangs-section{border-color:#783c4b;background:radial-gradient(ellipse at 100% 0%,#69202b5c,transparent 55%),linear-gradient(145deg,#2a171e,#141016 80%)}
+#tab-combat .weapon-layout{gap:16px}
+#tab-combat .weapon-col{
+ min-width:0;border-radius:14px;
+ background:linear-gradient(145deg,#100d1580,#21152180);
+ border:1px solid #7250696b;padding:15px;
+}
+#tab-combat .weapon-col h4{font-family:Georgia,serif;color:#f2d3ae;letter-spacing:.025em}
+#tab-combat .weapon-tag,#tab-combat .section-head .badge{
+ display:inline-flex;align-items:center;border-radius:99px;
+ border:1px solid #9c6a6d;background:#4b27398c;color:#f3cfb5;
+ padding:5px 9px;font-size:11px;white-space:normal
+}
+#tab-combat .rollmode{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}
+#tab-combat .rollmode label{
+ display:inline-flex;align-items:center;gap:7px;min-height:42px;padding:9px 13px;
+ border:1px solid #644458;border-radius:11px;background:#241a2b;
+ color:#e2cbd8;font-weight:650;cursor:pointer;transition:background .18s,border-color .18s,transform .18s
+}
+#tab-combat .rollmode label:has(input:checked){border-color:#b9889f;background:linear-gradient(125deg,#65354c,#3f2943);color:#fff2e5;box-shadow:inset 0 1px #ffffff1e}
+#tab-combat .rollmode input{accent-color:#e8b484;width:16px;height:16px;margin:0}
+#tab-combat .button-row{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}
+#tab-combat .button-row button,#tab-combat .vampire-quick-card button,#tab-combat .damage-grid button{
+ min-height:48px;border-radius:12px;padding:10px 15px;font-weight:750;
+ transition:transform .13s,filter .13s,box-shadow .13s;border-width:1px;
+}
+#tab-combat .button-row button:hover:not(:disabled),#tab-combat .vampire-quick-card button:hover:not(:disabled){filter:brightness(1.13);transform:translateY(-1px)}
+#tab-combat .button-row button:active:not(:disabled),#tab-combat .vampire-quick-card button:active:not(:disabled){transform:translateY(1px) scale(.99)}
+#tab-combat button:focus-visible,#tab-combat summary:focus-visible,#tab-combat input:focus-visible,#tab-combat select:focus-visible{
+ outline:2px solid var(--p2-focus);outline-offset:3px;
+}
+#tab-combat .dice-tray{
+ position:relative;min-height:76px;overflow:hidden;border-radius:15px!important;
+ border:1px solid #8d5d6a!important;background:
+ radial-gradient(ellipse at 90% 0%,#7a314148,transparent 52%),
+ linear-gradient(135deg,#221423,#100d17)!important;
+ box-shadow:inset 0 1px #ffffff18,0 8px 24px #0004;
+ padding:14px!important;margin:12px 0!important
+}
+#tab-combat .dice-tray:after{content:'✦';position:absolute;right:16px;top:3px;font:38px Georgia,serif;color:#e1a3b319;pointer-events:none}
+#tab-combat .dice-tray-title{color:#efc798!important;font-size:10px!important;letter-spacing:.14em!important;font-weight:850!important}
+#tab-combat .dice-placeholder{color:#bda8b5;font-style:italic}
+#tab-combat .roll-log{border-radius:12px;scrollbar-color:#87566a #1b1420}
+#tab-combat .mini-details,#tab-combat .cc-feature-fold{border-radius:13px}
+#tab-combat .mini-details>summary,#tab-combat .cc-feature-fold>summary{
+ cursor:pointer;min-height:44px;transition:background .15s
+}
+#tab-combat .mini-details>summary:hover,#tab-combat .cc-feature-fold>summary:hover{background:#6f35432d}
+#tab-combat .config-grid input,#tab-combat .config-grid select,#tab-combat .damage-grid input,#tab-combat .damage-grid select{
+ min-height:42px;border-radius:9px
+}
+#tab-combat .initiative-combat-panel{border-color:#97735d;background:radial-gradient(ellipse at 90% 0%,#85552e3b,transparent 55%),linear-gradient(135deg,#2a1d26,#17131c)}
+#tab-combat .initiative-combat-panel .section-head h3{color:#f0cca4}
+#tab-combat .hp-panel{background:radial-gradient(ellipse at 95% 0%,#6e233333,transparent 55%),linear-gradient(140deg,#251923,#17121e)}
+.roll-modal-card{border:1px solid #b17b81!important;box-shadow:0 26px 90px #000c,inset 0 1px #ffffff23!important;background:radial-gradient(ellipse at 80% 0%,#71334c63,transparent 60%),linear-gradient(155deg,#2c1a2e,#120d19)!important}
+.roll-modal-card #modalHeading{font-family:Georgia,serif;letter-spacing:.04em;color:#f4d2aa}
+.roll-modal-card .modal-dice{filter:drop-shadow(0 6px 12px #0006)}
+.roll-modal-card .modal-equation{color:#f4dec6}
+@media(min-width:761px){
+ #tab-combat .crossbow-pair{gap:20px}
+ #tab-combat .weapon-section,#tab-combat .martyr-section{padding:22px}
+ #tab-combat .weapon-col{padding:18px}
+ #tab-combat .dice-tray{min-height:94px}
+ #tab-combat .button-row button{flex:1 1 135px}
+}
+@media(max-width:760px){
+ #tab-combat .weapon-section,#tab-combat .martyr-section,#tab-combat .fangs-section{border-radius:16px;padding:12px!important}
+ #tab-combat .weapon-col{padding:11px;border-radius:12px}
+ #tab-combat .section-head h3{font-size:15px;letter-spacing:.025em}
+ #tab-combat .button-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #tab-combat .button-row button{min-width:0;min-height:49px;padding:9px 7px;font-size:12px}
+ #tab-combat .button-row button:first-child{grid-column:1/-1;min-height:54px;font-size:13px}
+ #tab-combat .rollmode label{flex:1 1 30%;justify-content:center;padding:9px 5px;font-size:11px;min-height:44px}
+ #tab-combat .dice-tray{min-height:84px}
+}
+@media(prefers-reduced-motion:reduce){
+ #tab-combat .button-row button,#tab-combat .rollmode label{transition:none!important}
+}
