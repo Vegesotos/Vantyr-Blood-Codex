@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const html=fs.readFileSync('index.html','utf8');
-const assets=['app.js','ascendants.js','curses.js','layout.js','spells.js','racial.js','vecna.js','future.js','mobile.js','concoction-data.js','concoction.js','observer-config.js','observer-sync.js','style.css','mobile.css','concoction.css','observer-ui.css','initiative-share.js','initiative-share.css'];
+const assets=['app.js','ascendants.js','curses.js','layout.js','spells.js','racial.js','vecna.js','future.js','mobile.js','concoction-data.js','concoction.js','observer-config.js','observer-sync.js','style.css','mobile.css','concoction.css','observer-ui.css','initiative-share.js','initiative-share.css','settings.js','settings.css'];
 for(const name of assets){
  assert(fs.existsSync(name),'Missing '+name);
  assert(html.includes(name),'Script or style not loaded: '+name);
@@ -16,6 +16,17 @@ const seen=new Set();
 for(const id of ids){assert(!seen.has(id),'Duplicate HTML id '+id);seen.add(id);}
 const required=['ccSearch','ccCategories','ccRarities','ccRecipes','ccLab','ccCraftItem','ccCauldron','ccStart','ccArcanaRoll','ccMedicineRoll','ccFinishDialog','ccBagList','ccEditForm','ccFinishAdd'];
 for(const id of required)assert(seen.has(id),'Missing crafting element '+id);
+for(const id of ['codexSettings','observerSettingsBtn','developerModeBtn','resetBtn']){
+ assert(seen.has(id),'Missing Settings menu control '+id);
+}
+assert(html.includes('class="codex-settings"'),'Settings should be a unified dropdown');
+const concoctionJS=fs.readFileSync('concoction.js','utf8');
+assert(concoctionJS.includes("document.addEventListener('pointerdown'"),'Concoction suggestions must support outside tap dismissal');
+const dmInitiativeHTML=fs.readFileSync('dm/index.html','utf8');
+assert(dmInitiativeHTML.includes('id="initiativeAddForm"'),'DM initiative add form missing');
+const dmInitiativeJS=fs.readFileSync('dm/initiative.js','utf8');
+assert(dmInitiativeJS.includes("addEventListener('submit'"),'DM initiative Enter submit missing');
+
 const sandbox={window:{}};vm.runInNewContext(fs.readFileSync('concoction-data.js','utf8'),sandbox);
 const items=sandbox.window.VANTYR_CONCOCTIONS;
 assert(Array.isArray(items)&&items.length>=160,'Crafting catalogue incomplete');
