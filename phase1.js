@@ -44,18 +44,23 @@
    $('p1CombatToggle').addEventListener('click',()=>originalClick('combatBtn'));
    $('p1NextTurn').addEventListener('click',()=>originalClick('endTurnBtn'));
    // Navigate to existing weapon sections; never duplicate attack or resource controls.
-   function jumpTo(needle){
-     const panel=$('tab-combat');const blocks=[...panel.querySelectorAll('section,article,details')];
-     let target=blocks.find(x=>x.classList.contains(needle));
-     if(!target)target=blocks.find(x=>x.className&&String(x.className).toLowerCase().includes(needle));
-     if(!target)target=[...panel.querySelectorAll('h3,h4,strong')].find(x=>x.textContent.toLowerCase().includes(needle))?.closest('section,article,details');
-     if(target){
-       for(let node=target;node&&node!==panel;node=node.parentElement)if(node.tagName==='DETAILS')node.open=true;
-       target.scrollIntoView({behavior:'smooth',block:'start'});
+   function jumpToWeapon(selector){
+     const target=document.querySelector(selector);
+     if(!target)return;
+     // The actual weapon cards live inside a collapsed Crossbows details element.
+     // Open all ancestor details before scrolling; never match a label in the dashboard.
+     for(let node=target.parentElement;node;node=node.parentElement){
+       if(node.tagName==='DETAILS')node.open=true;
      }
+     requestAnimationFrame(()=>{
+       target.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
+       target.classList.remove('p2-jump-highlight');
+       void target.offsetWidth;
+       target.classList.add('p2-jump-highlight');
+     });
    }
-   $('p1Starshot').addEventListener('click',()=>jumpTo('starshot'));
-   $('p1Martyr').addEventListener('click',()=>jumpTo('martyr'));
+   $('p1Starshot').addEventListener('click',()=>jumpToWeapon('#combatWeapons > .weapon-section'));
+   $('p1Martyr').addEventListener('click',()=>jumpToWeapon('#combatWeapons > .martyr-section'));
    const more=$('p1More'),menu=$('p1MoreMenu');
    const closeMenu=()=>{menu.hidden=true;more.setAttribute('aria-expanded','false')};
    function reflect(){
