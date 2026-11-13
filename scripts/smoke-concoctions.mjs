@@ -115,6 +115,7 @@ const dmErrors=[];
 dmPage.on('pageerror',e=>dmErrors.push(e.message));
 await dmPage.goto('http://127.0.0.1:8765/dm/',{waitUntil:'networkidle'});
 assert.equal(await dmPage.locator('#dmGate').isVisible(),true,'DM gate should block users without a link');
+assert.equal(await dmPage.locator('link[rel="manifest"]').getAttribute('href'),'manifest.webmanifest','iPhone DM PWA manifest must be installed');
 assert.equal(await dmPage.locator('#dmDashboard').isVisible(),false,'Private status must remain hidden');
 await dmPage.locator('.dm-manual-entry > summary').click();
 await dmPage.locator('#dmTokenField').fill('not-a-real-token');
@@ -133,7 +134,7 @@ const exampleSnapshot={
 };
 const endpoint='**/rest/v1/rpc/vantyr_observer_read';
 await dmPage.route(endpoint,route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({snapshot:exampleSnapshot,revision:1,updated_at:new Date().toISOString()})}));
-await dmPage.locator('#dmTokenField').fill('a'.repeat(64));
+await dmPage.locator('#dmTokenField').fill('https://vegesotos.github.io/Vantyr-Blood-Codex/dm/#token='+('a'.repeat(64)));
 await dmPage.locator('#dmConnect').click();
 await dmPage.locator('#dmDashboard').waitFor({state:'visible'});
 assert.equal(await dmPage.locator('#dmHp').innerText(),'124 / 178');
