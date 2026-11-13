@@ -152,7 +152,114 @@ function riteState(weapon){return data.rites[weapon]}
 function riteDiceFor(weapon,crit=false){const r=riteState(weapon);if(!r.active||r.type==='none')return null;const base=rollDice('1d8',crit);const extra=r.type==='dawn'&&r.undead?rollDice('1d8',crit):null;return {type:RITE_TYPES[r.type].type,parts:base.rolled.concat(extra?.rolled||[]),total:base.total+(extra?.total||0),undead:!!extra}}
 function riteDescription(weapon,crit=false){const result=riteDiceFor(weapon,crit);return result?{amount:result.total,txt:` + ${result.parts.join('+')} ${result.type} rite${result.undead?' (Undead +1 hemocraft die)':''}`}:{amount:0,txt:''}}
 function renderRites(){for(const key of ['starshot','martyr','fangs']){const r=riteState(key);const select=el('rite-'+key);select.value=r.type;select.disabled=r.locked;el('rite-active-'+key).checked=r.active;el('rite-active-'+key).disabled=r.type==='none';el('rite-lock-'+key).textContent=r.locked?'🔒 Locked — Unlock':'🔓 Lock selected Rite';const special=el('rite-undead-wrap-'+key);special.hidden=r.type!=='dawn';el('rite-undead-'+key).checked=r.undead;el('rite-undead-'+key).disabled=!r.active;const status=el('rite-status-'+key);status.textContent=r.active?`${RITE_TYPES[r.type].name} · +1d8 ${RITE_TYPES[r.type].type}${r.type==='dawn'&&r.undead?' · +1d8 vs Undead':''}`:'No active rite';status.classList.toggle('active',r.active);el('rite-dawn-benefits-'+key).hidden=!(r.active&&r.type==='dawn')}}
-function setupRites(){for(const key of ['starshot','martyr','fangs']){const r=riteState(key);el('rite-'+key).addEventListener('change',e=>{if(r.locked)return;r.type=e.target.value;r.active=false;r.undead=false;save();renderRites()});el('rite-active-'+key).addEventListener('change',e=>{r.active=e.target.checked&&r.type!=='none';if(!r.active)r.undead=false;record(`${key.toUpperCase()}: ${r.active?'Rite activated: '+RITE_TYPES[r.type].name:'Rite deactivated'}. Apply any Hemocraft activation cost manually until confirmed.`);renderRites()});el('rite-lock-'+key).addEventListener('click',()=>{r.locked=!r.locked;record(`${key.toUpperCase()}: Rite selection ${r.locked?'locked':'unlocked'}.`);renderRites()});el('rite-undead-'+key).addEventListener('change',e=>{r.undead=e.target.checked;save();renderRites()})}}
+const RITE_WEAPON_NAMES={starshot:'Starshot Crossbow',martyr:'Martyr Crossbow',fangs:'Vampire Fangs'};
+let riteActivationOpen=false;
+function confirmCrimsonRite(weapon,rite){
+ return new Promise(resolve=>{
+  // A newly checked Rite Active box must not change game state until confirmation.
+  if(riteActivationOpen){resolve(false);return}
+  riteActivationOpen=true;
+  const backdrop=document.createElement('div');
+  backdrop.className='rite-confirm-overlay';
+  backdrop.setAttribute('role','presentation');
+  const dialog=document.createElement('section');
+  dialog.className='rite-confirm-card';
+  dialog.setAttribute('role','dialog');
+  dialog.setAttribute('aria-modal','true');
+  dialog.setAttribute('aria-labelledby','riteConfirmTitle');
+  dialog.setAttribute('aria-describedby','riteConfirmDescription');
+  const top=document.createElement('div');top.className='rite-confirm-kicker';top.textContent='BLOOD HUNTER · CRIMSON RITE';
+  const title=document.createElement('h2');title.id='riteConfirmTitle';title.textContent='Activate '+RITE_TYPES[rite].name+'?';
+  const subtitle=document.createElement('p');subtitle.className='rite-confirm-weapon';subtitle.textContent='Weapon: '+RITE_WEAPON_NAMES[weapon];
+  const cost=document.createElement('div');cost.className='rite-confirm-cost';
+  const die=document.createElement('strong');die.textContent='1d8';
+  const detail=document.createElement('span');detail.textContent='HP activation cost · 1–8 HP';
+  cost.append(die,detail);
+  const message=document.createElement('p');message.id='riteConfirmDescription';
+  message.textContent='Confirm to roll 1d8 and immediately lose that many current HP. This bypasses Temporary HP. The rolled result will appear in the dice popup. Cancelling costs nothing.';
+  const actions=document.createElement('div');actions.className='rite-confirm-actions';
+  const cancel=document.createElement('button');cancel.type='button';cancel.className='rite-confirm-cancel';cancel.textContent='Cancel · No Cost';
+  const accept=document.createElement('button');accept.type='button';accept.className='rite-confirm-accept';accept.textContent='Roll 1d8 & Activate';
+  actions.append(cancel,accept);dialog.append(top,title,subtitle,cost,message,actions);
+  backdrop.append(dialog);document.body.append(backdrop);
+  const priorFocus=document.activeElement;
+  let settled=false;
+  function finish(approved){
+   if(settled)return;
+   settled=true;document.removeEventListener('keydown',onKey);
+   backdrop.remove();riteActivationOpen=false;priorFocus?.focus?.();resolve(approved);
+  }
+  function onKey(e){
+   if(e.key==='Escape'){e.preventDefault();finish(false)}
+   if(e.key==='Tab'){
+    const first=cancel,last=accept;
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+   }
+  }
+  document.addEventListener('keydown',onKey);
+  backdrop.addEventListener('click',e=>{if(e.target===backdrop)finish(false)});
+  cancel.addEventListener('click',()=>finish(false));
+  accept.addEventListener('click',()=>finish(true));
+  cancel.focus();
+ });
+}
+function activateConfirmedRite(key,r){
+ if(r.active||r.type==='none')return;
+ const cost=1+Math.floor(Math.random()*8);
+ const previousHp=Math.max(0,Number(data.currentHp)||0);
+ const afterHp=Math.max(0,previousHp-cost);
+ r.active=true;
+ data.currentHp=afterHp;
+ activeDiceTray=key;
+ recentDice=[{sides:8,value:cost}];
+ pendingAttackResult=null;pendingCheckResult=null;
+ // Activation cost is self-inflicted HP loss: it bypasses Temp HP
+ // and intentionally does not call incoming-damage resistance/healing.
+ const info=RITE_WEAPON_NAMES[key]+' · '+RITE_TYPES[r.type].name;
+ const message='🩸 CRIMSON RITE ACTIVATED — '+info+
+   '\\nHemocraft die 1d8 = '+cost+' HP cost.'+
+   '\\nCurrent HP: '+previousHp+' → '+afterHp+
+   (cost>previousHp?' (HP cannot fall below 0)':'')+
+   '. Temporary HP unchanged.';
+ record(message);
+ renderRites();renderHp();
+ document.dispatchEvent(new CustomEvent('vantyr:hp-updated'));
+}
+function setupRites(){
+ for(const key of ['starshot','martyr','fangs']){
+  const r=riteState(key);
+  el('rite-'+key).addEventListener('change',e=>{
+   if(r.locked)return;
+   r.type=e.target.value;r.active=false;r.undead=false;save();renderRites()
+  });
+  el('rite-active-'+key).addEventListener('change',async e=>{
+   const requested=e.target.checked;
+   // Always revert the DOM checkbox to the last committed state
+   // while we wait for consent, including cancellation / Escape.
+   renderRites();
+   if(!requested){
+    if(!r.active)return;
+    r.active=false;r.undead=false;
+    record(key.toUpperCase()+': Rite deactivated. No HP cost for deactivation.');
+    renderRites();return;
+   }
+   if(r.active||r.type==='none'||riteActivationOpen)return;
+   const selectedType=r.type;
+   const confirmed=await confirmCrimsonRite(key,selectedType);
+   if(!confirmed)return;
+   // A concurrent change must not activate a stale rite.
+   if(r.type!==selectedType||r.active)return;
+   activateConfirmedRite(key,r);
+  });
+  el('rite-lock-'+key).addEventListener('click',()=>{
+   r.locked=!r.locked;
+   record(key.toUpperCase()+': Rite selection '+(r.locked?'locked':'unlocked')+'.');
+   renderRites()
+  });
+  el('rite-undead-'+key).addEventListener('change',e=>{r.undead=e.target.checked;save();renderRites()})
+ }
+}
 
 function paralysisSelected(){return data.martyr.paralyzedTurns>0 && data.paralysisTarget.selected}
 function paralysisAutoCrit(){return paralysisSelected() && data.paralysisTarget.distance==='close'}
