@@ -80,12 +80,25 @@ async function refresh(){
     else connection('stale','● CONNECTION INTERRUPTED');
   }finally{inFlight=false}
 }
+function extractInvitation(value){
+  const raw=String(value||'').trim();
+  if(/^[0-9a-f]{64}$/.test(raw))return raw;
+  try{
+    const url=new URL(raw);
+    if(url.protocol!=='https:'||url.hostname!=='vegesotos.github.io'||
+        !/^\/Vantyr-Blood-Codex\/dm\/(?:index\.html)?$/.test(url.pathname))return '';
+    const token=new URLSearchParams(url.hash.slice(1)).get('token')||'';
+    return /^[0-9a-f]{64}$/.test(token)?token:'';
+  }catch(_){return ''}
+}
 function connect(value){
-  if(!/^[0-9a-f]{64}$/.test(value)){
-    text('dmGateMessage','Invalid private link. Ask the player for the full invitation URL.');
+  const invite=extractInvitation(value);
+  if(!invite){
+    text('dmGateMessage','Invalid private link. Paste the complete DM invitation URL from Vantyr’s player.');
     return;
   }
-  token=value;
+  token=invite;
+  value=invite;
   try{
     sessionStorage.setItem(DM_KEY,value);
     localStorage.setItem(DM_KEY,value);
