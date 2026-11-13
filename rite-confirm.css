@@ -1,0 +1,19 @@
+/* Crimson Rite activation consent · desktop + Android */
+.rite-confirm-overlay{position:fixed;inset:0;z-index:10020;display:grid;place-items:center;background:#08050cdb;backdrop-filter:blur(8px);padding:15px}
+.rite-confirm-card{width:min(480px,100%);max-height:90dvh;overflow:auto;padding:26px 24px 23px;border-radius:22px;border:1px solid #bb7d86;background:radial-gradient(circle at 92% 2%,#74334876,transparent 58%),linear-gradient(145deg,#31202c,#130f1b);box-shadow:0 32px 100px #000d,inset 0 1px #ffffff1d;color:#fbe7e4;animation:rite-modal-enter .24s cubic-bezier(.2,.8,.2,1)}
+.rite-confirm-kicker{color:#e7a5b8;letter-spacing:.15em;font-size:10px;font-weight:850}
+.rite-confirm-card h2{font:600 clamp(22px,5vw,29px) Georgia,serif;color:#ffe0c0;line-height:1.25;margin:12px 0}
+.rite-confirm-weapon{font-size:14px;font-weight:750;color:#e9c5d4;margin:4px 0 17px}
+.rite-confirm-cost{display:flex;align-items:center;gap:17px;padding:17px;border:1px solid #aa6c78;border-radius:15px;background:linear-gradient(135deg,#642e46,#321f31);margin:16px 0}
+.rite-confirm-cost strong{font:700 38px Georgia,serif;color:#ffe2b9;text-shadow:0 0 20px #dba47370}
+.rite-confirm-cost span{font-size:14px;color:#f2d7d3;line-height:1.4}
+#riteConfirmDescription{font-size:13px;color:#d9bfca;line-height:1.65}
+.rite-confirm-actions{display:flex;gap:10px;margin-top:21px}
+.rite-confirm-actions button{flex:1;min-height:49px;border-radius:11px;border:1px solid #956678;padding:10px 12px;font-weight:800;cursor:pointer;color:#ffe6e0}
+.rite-confirm-cancel{background:#362638}
+.rite-confirm-accept{background:linear-gradient(130deg,#a34962,#6b2c45);border-color:#d89091!important}
+.rite-confirm-actions button:focus-visible{outline:2px solid #f6d8a2;outline-offset:3px}
+.rite-confirm-actions button:active{transform:scale(.98)}
+@keyframes rite-modal-enter{from{transform:translateY(14px) scale(.97);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+@media(max-width:760px){.rite-confirm-card{padding:20px 17px}.rite-confirm-actions{flex-direction:column-reverse}.rite-confirm-actions button{width:100%}}
+@media(prefers-reduced-motion:reduce){.rite-confirm-card{animation:none}}
