@@ -48,7 +48,80 @@
   <div class="brands-subtitle">Event history</div><ul id="brandLog" class="brands-log" aria-label="Brand event history"></ul>
   `;
   deck.after(panel);
-  const feedback=msg=>{el('brandFeedback').textContent=msg;panel.classList.remove('brands-event');void panel.offsetWidth;panel.classList.add('brands-event')};
+  // Own dialog, because the core roll modal is reserved for authoritative character rolls.
+  // Dice and numbers here are resolved by the existing Brand controls; never touch enemy HP.
+  const overlay=document.createElement('div');
+  overlay.className='brand-result-overlay';overlay.id='brandResultOverlay';overlay.hidden=true;
+  overlay.innerHTML=`
+    <section class="brand-result-card" role="dialog" aria-modal="true" aria-labelledby="brandResultTitle" tabindex="-1">
+      <button type="button" class="brand-result-close" id="brandResultClose" aria-label="Close result">×</button>
+      <div class="brand-result-kicker" id="brandResultKicker">BLOOD HUNTER · BRAND</div>
+      <h2 id="brandResultTitle">Brand result</h2>
+      <div id="brandResultFaces" class="brand-result-faces"></div>
+      <div id="brandResultTotal" class="brand-result-total"></div>
+      <p id="brandResultDetails" class="brand-result-details"></p>
+      <div id="brandResultActions" class="brand-result-actions"></div>
+    </section>`;
+  document.body.append(overlay);
+  let previousFocus=null;
+  const closeResult=()=>{overlay.hidden=true;previousFocus?.focus?.()};
+  el('brandResultClose').addEventListener('click',closeResult);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)closeResult()});
+  document.addEventListener('keydown',e=>{
+    if(overlay.hidden)return;
+    if(e.key==='Escape'){e.preventDefault();closeResult()}
+    if(e.key==='Tab'){
+      const buttons=[...overlay.querySelectorAll('button:not(:disabled)')];
+      if(!buttons.length)return;
+      const first=buttons[0],last=buttons[buttons.length-1];
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+    }
+  });
+  const openResult=({title,kicker='BLOOD HUNTER · BRAND',dice=[],total=null,details='',actions=[]})=>{
+    previousFocus=document.activeElement;
+    el('brandResultKicker').textContent=kicker;
+    el('brandResultTitle').textContent=title;
+    const faces=el('brandResultFaces');faces.replaceChildren();
+    dice.forEach((value,index)=>{
+      const face=document.createElement('div');face.className='brand-die';
+      const number=document.createElement('strong');number.textContent=value;
+      const label=document.createElement('small');label.textContent='D6';
+      face.style.setProperty('--i',String(index));face.append(number,label);faces.append(face);
+    });
+    const result=el('brandResultTotal');result.textContent=total===null?'':String(total);result.hidden=total===null;
+    el('brandResultDetails').textContent=details;
+    const row=el('brandResultActions');row.replaceChildren();
+    actions.forEach(action=>{
+      const b=document.createElement('button');b.type='button';b.textContent=action.label;
+      if(action.primary)b.className='brand-result-primary';
+      b.addEventListener('click',()=>{closeResult();action.onClick?.()});row.append(b);
+    });
+    overlay.hidden=false;el('brandResultClose').focus();
+  };
+  const stunnedInfo=(name,reason)=>{
+    const detail=name+' is STUNNED until the end of Vantyr\'s next turn. '+reason+
+      '\\n\\nSTUNNED (D&D 5e 2014): Incapacitated (cannot take actions or reactions), cannot move, and can speak only falteringly. Automatically fails Strength and Dexterity saving throws. Attack rolls against it have advantage. Stunned does NOT grant automatic critical hits.';
+    event(name+' FAILED Brand of Axiom WIS save · STUNNED until the end of Vantyr\'s next turn.');
+    feedback(detail);
+    openResult({title:name+' — STUNNED',kicker:'BRAND OF AXIOM · FAILED WIS SAVE',details:detail,actions:[{label:'Understood',primary:true}]});
+  };
+  const failedAxiom=reason=>()=>{
+    if(!state.target)return;
+    stunnedInfo(state.target,reason);
+  };
+  const axiomChoices=source=>{
+    if(!state.target)return;
+    const dc=stats().dc,name=state.target;
+    const reason=source==='initial'?'Reverts to its true form.':'Its attempted shapechange fails.';
+    event(name+' · Brand of Axiom Wisdom saving throw DC '+dc+' requested.');
+    openResult({title:name+' · Wisdom Save DC '+dc,kicker:'BRAND OF AXIOM · DM RESOLVES',
+      details:source==='initial'?'The creature was branded while in an alternate form. The DM determines whether its Wisdom save succeeds.':'The branded creature attempted to change shape. The DM determines whether its Wisdom save succeeds.',
+      actions:[
+        {label:'Failed Save · Stunned',primary:true,onClick:failedAxiom(reason)},
+        {label:'Successful Save',onClick:()=>{event(name+' succeeded Brand of Axiom Wisdom DC '+dc+'.');feedback(name+' succeeded its Wisdom save; no Stunned condition from this attempt.')}}]});
+  };
+    const feedback=msg=>{el('brandFeedback').textContent=msg;panel.classList.remove('brands-event');void panel.offsetWidth;panel.classList.add('brands-event')};
   const num=(x,fallback)=>Number.isFinite(Number(x))?Number(x):fallback;
   const stats=()=>{
    const d=character(),mode=d.mode==='emperor'?'emperor':'normal';
@@ -66,7 +139,7 @@
    el('brandPill').textContent=state.target?'ACTIVE':state.available?'READY':'SPENT';
    el('brandApply').disabled=!state.available;
    el('brandDismiss').disabled=!state.target;
-   for(const id of ['brandRetaliate','brandTeleport','brandAxiom'])el(id).disabled=!state.target;
+   for(const id of ['brandRetaliate','brandTeleport','brandAxiom','brandAxiomInitial'])el(id).disabled=!state.target;
    const log=el('brandLog');log.replaceChildren();
    if(!state.events.length){const li=document.createElement('li');li.textContent='No events yet.';log.append(li)}
    state.events.forEach(x=>{const li=document.createElement('li');li.textContent='#'+x.n+' · '+x.message;log.append(li)});
@@ -94,22 +167,35 @@
   });
   el('brandRetaliate').addEventListener('click',()=>{
    if(!state.target)return;
-   const {damage}=stats();event('Retaliation against '+state.target+': '+damage+' psychic damage (DM applies).');
-   feedback(state.target+' takes '+damage+' psychic damage. Trigger: it damaged you or a visible creature within 5 ft of you. No reaction required.');
+   const name=state.target,{damage}=stats();
+   event(name+' · Brand retaliation: '+damage+' psychic damage (DM applies).');
+   const detail='The branded enemy damaged Vantyr or a visible creature within 5 feet of him. Tethering deals twice the Hemocraft modifier as psychic damage. No reaction required. Confirm the trigger with the DM.';
+   feedback(name+' takes '+damage+' psychic damage. '+detail);
+   openResult({title:name+' · Psychic Retaliation',kicker:'BRAND OF CASTIGATION + TETHERING',total:damage,details:detail,
+      actions:[{label:'Close',primary:true}]});
   });
   el('brandTeleport').addEventListener('click',()=>{
    if(!state.target)return;
-   const dice=roll4d6(),total=dice.reduce((a,b)=>a+b,0),dc=stats().dc;
-   event('Teleport/planar attempt: '+dice.join('+')+' = '+total+' psychic damage; Wisdom DC '+dc+' to avoid cancellation.');
-   feedback(state.target+' takes '+total+' psychic damage (4d6: '+dice.join(' + ')+'). Wisdom save DC '+dc+'. On failure, teleport/planar escape fails. DM resolves the save.');
+   const name=state.target,dice=roll4d6(),total=dice.reduce((a,b)=>a+b,0),dc=stats().dc;
+   event(name+' teleport/plane attempt · 4d6 ['+dice.join(', ')+'] = '+total+' psychic damage · WIS DC '+dc+'.');
+   const detail=name+' takes '+total+' psychic damage (4d6), then makes a Wisdom saving throw DC '+dc+'. On failure, the teleportation or plane-travel attempt fails. This effect does not cause Stunned.';
+   feedback(detail);
+   openResult({title:name+' · Teleport Punishment',kicker:'BRAND OF TETHERING · 4D6 PSYCHIC',dice,total,details:detail,
+     actions:[
+      {label:'WIS Save Failed · Escape Blocked',primary:true,onClick:()=>{
+       event(name+' FAILED Tethering WIS DC '+dc+' · escape attempt blocked.');
+       openResult({title:name+' · Escape Prevented',kicker:'BRAND OF TETHERING · FAILED SAVE',details:name+' failed its Wisdom save. Teleportation or travel to another plane fails. '+total+' psychic damage was rolled. The creature is NOT Stunned by Tethering.',actions:[{label:'Close',primary:true}]});
+      }},
+      {label:'WIS Save Passed',onClick:()=>{event(name+' PASSED Tethering WIS DC '+dc+' · escape attempt not blocked by the brand.');feedback(name+' passed its Wisdom save. The teleport/planar attempt is not prevented by Brand of Tethering; '+total+' psychic damage still applies.')}}]});
   });
-  el('brandAxiom').addEventListener('click',()=>{
-   if(!state.target)return;
-   const dc=stats().dc;
-   event('Axiom triggered: '+state.target+' Wisdom save DC '+dc+' · DM resolves.');
-   feedback('Wisdom save DC '+dc+'. On failure: forced true-form reveal or attempted shapechange fails, and '+state.target+' is stunned until the end of your next turn. When first branded, invisibility/illusions end automatically.');
-  });
-  // Follow Vantyr's authoritative form data without modifying the game state.
+  el('brandAxiom').addEventListener('click',()=>axiomChoices('change'));
+  const axiomInitial=document.createElement('button');
+  axiomInitial.type='button';axiomInitial.id='brandAxiomInitial';
+  axiomInitial.textContent='◈ Axiom · Initial Alternate Form';
+  el('brandAxiom').parentElement.append(axiomInitial);
+  axiomInitial.addEventListener('click',()=>axiomChoices('initial'));
+  // This button is for a DM-confirmed failure only, not an automatic saving throw.
+    // Follow Vantyr's authoritative form data without modifying the game state.
   const mode=el('modeLabel');if(mode)new MutationObserver(render).observe(mode,{childList:true,characterData:true,subtree:true});
   render();
  };
