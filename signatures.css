@@ -1,0 +1,76 @@
+/* VANTYR signature combat moments v1 — visual-only layer.
+   Unique design per weapon; never affects dice, HP, resources or game state. */
+:root{
+ --v4-star:#d7b879;--v4-star-deep:#705333;
+ --v4-martyr:#b9a1ea;--v4-martyr-deep:#534075;
+ --v4-fang:#e58d9b;--v4-fang-deep:#702d43;
+ --v4-emperor:#f0ca83;
+}
+#tab-combat .weapon-section{--v4-accent:var(--v4-star);--v4-deep:var(--v4-star-deep)}
+#tab-combat .martyr-section{--v4-accent:var(--v4-martyr);--v4-deep:var(--v4-martyr-deep)}
+#tab-combat .fangs-section{--v4-accent:var(--v4-fang);--v4-deep:var(--v4-fang-deep)}
+#tab-combat :is(.weapon-section,.martyr-section,.fangs-section){
+ transition:border-color .22s ease,box-shadow .22s ease;
+ border-color:color-mix(in srgb,var(--v4-accent) 48%,#413344)!important
+}
+#tab-combat :is(.weapon-section,.martyr-section,.fangs-section)>.section-head h3{
+ color:var(--v4-accent);text-shadow:0 1px 22px color-mix(in srgb,var(--v4-accent) 18%,transparent)
+}
+#tab-combat :is(.weapon-section,.martyr-section,.fangs-section) .dice-tray{
+ border-color:color-mix(in srgb,var(--v4-accent) 55%,#292232)!important;
+ background:radial-gradient(circle at 85% 0%,color-mix(in srgb,var(--v4-deep) 58%,transparent),transparent 58%),linear-gradient(135deg,#211724,#100e18)!important
+}
+#tab-combat :is(.weapon-section,.martyr-section,.fangs-section) .dice-tray-title{color:var(--v4-accent)!important}
+#tab-combat :is(.weapon-section,.martyr-section,.fangs-section) button[data-dice-tray]{
+ border-color:color-mix(in srgb,var(--v4-accent) 45%,#614858)!important;
+}
+#tab-combat .martyr-section button[data-dice-tray].v3-primary{background:linear-gradient(140deg,#725288,#46304f)!important}
+#tab-combat .fangs-section button[data-dice-tray].v3-primary{background:linear-gradient(140deg,#923f59,#59243b)!important}
+#tab-combat .weapon-section button[data-dice-tray].v3-primary{background:linear-gradient(140deg,#98713e,#5a3340)!important}
+#tab-combat .v4-active-weapon{box-shadow:0 0 0 1px var(--v4-accent),0 0 30px color-mix(in srgb,var(--v4-accent) 24%,transparent),0 18px 35px #0008!important}
+#tab-combat .v4-active-weapon .dice-tray{box-shadow:inset 0 1px #ffffff2f,0 0 23px color-mix(in srgb,var(--v4-accent) 27%,transparent)!important}
+#tab-combat .v4-weapon-sigil{
+ display:flex;align-items:center;gap:9px;min-height:28px;margin:10px 0 4px;
+ font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--v4-accent)
+}
+#tab-combat .v4-weapon-sigil:before{content:'✦';font-size:14px}
+#tab-combat .martyr-section .v4-weapon-sigil:before{content:'◆'}
+#tab-combat .fangs-section .v4-weapon-sigil:before{content:'♥'}
+#tab-combat .v4-weapon-sigil:after{content:'';height:1px;flex:1;background:linear-gradient(90deg,var(--v4-accent),transparent);opacity:.45}
+#tab-combat .v4-weapon-sigil[data-v4-action="critical"]{color:#ffe4ae}
+#tab-combat .v4-weapon-sigil[data-v4-action="critical"]:before{content:'✹'}
+.roll-modal.v4-starshot .roll-modal-card{--v4-modal:#e2c282;border-color:#b59a6c!important;background:radial-gradient(circle at 88% 10%,#85613b73,transparent 55%),linear-gradient(150deg,#332630,#130e19)!important}
+.roll-modal.v4-martyr .roll-modal-card{--v4-modal:#c4b1f1;border-color:#9d83c3!important;background:radial-gradient(circle at 88% 10%,#674b8873,transparent 55%),linear-gradient(150deg,#272135,#130e19)!important}
+.roll-modal.v4-fangs .roll-modal-card{--v4-modal:#eda0ae;border-color:#b96986!important;background:radial-gradient(circle at 88% 10%,#8e37516e,transparent 55%),linear-gradient(150deg,#321c29,#130e19)!important}
+.roll-modal:is(.v4-starshot,.v4-martyr,.v4-fangs) .modal-eyebrow,
+.roll-modal:is(.v4-starshot,.v4-martyr,.v4-fangs) #modalHeading{color:var(--v4-modal,#ebc99e)!important}
+.roll-modal:is(.v4-starshot,.v4-martyr,.v4-fangs) .modal-final{
+ border-color:var(--v4-modal,#ebc99e)!important;
+ box-shadow:0 0 23px color-mix(in srgb,var(--v4-modal) 24%,transparent)
+}
+.roll-modal.v4-crit .roll-modal-card{
+ box-shadow:0 26px 88px #000c,0 0 55px color-mix(in srgb,var(--v4-modal,#f0cd8d) 32%,transparent)!important
+}
+.roll-modal.v4-crit .modal-final{animation:v4-critical 640ms cubic-bezier(.2,.8,.2,1) both}
+#modeBtn.v4-emperor-button{border:1px solid #d8ae73!important;box-shadow:inset 0 1px #ffecc14d,0 5px 21px #9b713748!important}
+#app .phase1-dashboard.v4-emperor-state{
+ background:radial-gradient(circle at 91% 0%,#a9813f78,transparent 47%),radial-gradient(circle at 5% 100%,#67294742,transparent 55%),linear-gradient(140deg,#312127,#120e18 80%)!important;
+ border-color:#d7b177!important
+}
+#app .phase1-dashboard.v4-emperor-state .p1-title h2{color:#ffe7b5;text-shadow:0 0 24px #e3ac6c7a}
+#app .phase1-dashboard.v4-emperor-state .p1-form{background:linear-gradient(120deg,#8b6038,#5b3437);border-color:#d6a564;color:#fff0c5}
+#app .phase1-dashboard.v4-emperor-state .p1-stats>div{border-color:#a17b57}
+#app .phase1-dashboard.v4-emperor-state .p1-hp-head strong{color:#ffefd0}
+#app .phase1-dashboard.v4-emperor-entry{animation:v4-coronation 950ms ease-out}
+#app .phase1-dashboard.v4-emperor-exit{animation:v4-coronation 550ms ease-out reverse}
+#app #p1Starshot.v4-quick-glow{box-shadow:0 0 0 1px var(--v4-star),0 0 25px #bf914c66}
+#app #p1Martyr.v4-quick-glow{box-shadow:0 0 0 1px var(--v4-martyr),0 0 25px #926cc166}
+@keyframes v4-coronation{0%{filter:brightness(1);transform:scale(.995)}35%{filter:brightness(1.3);box-shadow:0 0 48px #e5bf7968}100%{filter:brightness(1);transform:scale(1)}}
+@keyframes v4-critical{0%{transform:scale(.87);filter:brightness(1.6);opacity:.6}45%{transform:scale(1.12);filter:brightness(1.35)}100%{transform:scale(1);filter:brightness(1);opacity:1}}
+@media(max-width:760px){
+ #tab-combat .v4-weapon-sigil{font-size:9px;letter-spacing:.08em}
+ #app .phase1-dashboard.v4-emperor-state .p1-title h2{font-size:27px}
+}
+@media(prefers-reduced-motion:reduce){
+ .roll-modal.v4-crit .modal-final,#app .phase1-dashboard.v4-emperor-entry,#app .phase1-dashboard.v4-emperor-exit{animation:none!important}
+}
