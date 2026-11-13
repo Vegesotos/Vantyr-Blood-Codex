@@ -70,7 +70,7 @@
       <button id="initiativeClear" type="button" class="danger">✕ Clear Board</button>
       <div id="initiativeBoardStatus" class="initiative-board-status" role="status">Connecting to initiative board…</div>
     </div>
-    <div class="initiative-add">
+    <form class="initiative-add" id="initiativeAddForm" autocomplete="off">
       <h2>＋ ADD COMBATANT</h2>
       <div class="initiative-add-controls">
         <input id="initiativeAddName" maxlength="60" placeholder="Character / NPC / Enemy" aria-label="Combatant name"/>
@@ -78,9 +78,9 @@
           <option value="player">Player</option><option value="npc">NPC</option><option value="enemy">Enemy</option>
         </select>
         <input id="initiativeAddScore" type="number" min="-99" max="999" placeholder="Initiative" aria-label="Initiative value"/>
-        <button id="initiativeAddBtn" type="button">＋ Add</button>
+        <button id="initiativeAddBtn" type="submit">＋ Add</button>
       </div>
-    </div>
+    </form>
     <div id="initiativeEntries" class="initiative-list" aria-live="polite"><p class="initiative-empty">No combatants yet.</p></div>
     <p class="initiative-footnote">🩸 Vantyr's Stand by the Emperor roll appears here when shared from the player app. The DM can edit any initiative score without changing the character's HP or abilities. The DM invitation link grants initiative-board editing only.</p>
   </section>
