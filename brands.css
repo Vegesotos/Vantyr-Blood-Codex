@@ -1,0 +1,48 @@
+/* VANTYR · BLOOD HUNTER BRANDS · responsive action tracker */
+#app #brandsShortcut{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:12px;min-height:61px;border:1px solid #c3788e!important;background:linear-gradient(115deg,#64273f,#34213b 65%,#522737)!important;color:#ffe6df!important;border-radius:13px;box-shadow:inset 0 1px #ffe3d029,0 8px 24px #0006}
+#app #brandsShortcut strong{font-size:14px;letter-spacing:.13em}
+#app #brandsShortcut small{font-size:10px;color:#e2aebe}
+#app #brandsShortcut .brand-icon{font:28px Georgia,serif;color:#ffb1bd}
+#app #brandsShortcut .brand-shortcut-copy{display:grid;gap:3px;text-align:left}
+#app #brandsShortcut .brand-pill{font-size:10px;border:1px solid #ad6e7b;padding:5px 9px;border-radius:99px;white-space:nowrap}
+#app #brandsShortcut[aria-expanded="true"]{border-color:#ffc0ae!important;box-shadow:0 0 0 1px #d28f8e,0 0 25px #a24e5866}
+#app #brandsPanel{border:1px solid #a06a79;border-radius:19px;background:radial-gradient(ellipse at 100% 0%,#6333486b,transparent 55%),linear-gradient(145deg,#271922,#141018);padding:20px;margin:0 0 18px;color:#f5e4e7;box-shadow:0 16px 45px #0007}
+#app #brandsPanel[hidden]{display:none!important}
+#app #brandsPanel .brands-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+#app #brandsPanel h3{font:600 25px Georgia,serif;margin:4px 0 6px;color:#ffe0c4}
+#app #brandsPanel p{color:#cbb6c3;margin:6px 0;line-height:1.5}
+#app #brandsPanel .brands-close{width:37px;height:37px;border-radius:11px;border:1px solid #82576c;background:#362234;color:#ffe0d0}
+#app #brandsPanel .brands-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:15px;margin-top:14px}
+#app #brandsPanel .brands-card{background:#140f1999;border:1px solid #684357;border-radius:15px;padding:15px;min-width:0}
+#app #brandsPanel .brands-kicker{font-size:10px;font-weight:800;color:#d59ba8;letter-spacing:.15em}
+#app #brandsPanel .brands-value{font:700 26px Georgia,serif;color:#f9d7af;margin:6px 0}
+#app #brandsPanel .brands-label{font-size:12px;color:#cfb9c2}
+#app #brandsPanel .brands-statline{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0}
+#app #brandsPanel .brands-statline>div{background:#34212e;border:1px solid #6a4559;border-radius:11px;padding:10px 8px;text-align:center}
+#app #brandsPanel .brands-statline strong{display:block;color:#f6d0a2;font-size:18px}
+#app #brandsPanel .brands-statline small{color:#c9b2bc;font-size:10px}
+#app #brandsPanel .brands-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+#app #brandsPanel button{min-height:42px;border-radius:10px;padding:10px 13px;background:#48283b;border:1px solid #945c6e;color:#ffe7e4;cursor:pointer;font-weight:750}
+#app #brandsPanel button.primary{background:linear-gradient(135deg,#a84d64,#6b2c45);border-color:#d18792}
+#app #brandsPanel button.gold{background:linear-gradient(135deg,#806041,#503542);border-color:#bd9462}
+#app #brandsPanel button:disabled{opacity:.45;cursor:not-allowed}
+#app #brandsPanel :is(button,input):focus-visible{outline:2px solid #ffe0b5;outline-offset:2px}
+#app #brandsPanel .brands-field{display:grid;gap:5px;color:#e3cdd4;font-weight:700;font-size:12px}
+#app #brandsPanel input[type="text"]{width:100%;min-height:43px;background:#170f1a;color:#fff1ed;border:1px solid #845667;padding:10px;border-radius:10px}
+#app #brandsPanel .brands-check{display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.45;margin-top:10px;color:#ddc3ce}
+#app #brandsPanel .brands-check input{width:18px;height:18px;accent-color:#c86b86;flex-shrink:0}
+#app #brandsPanel .brands-status{color:#ffd6a9!important;font-size:12px;font-weight:700}
+#app #brandsPanel .brands-feedback{min-height:42px;padding:10px 12px;border-radius:11px;background:#3c2635;border:1px solid #7d5065;color:#ffe0c8;font-size:12px;margin:12px 0;white-space:pre-wrap}
+#app #brandsPanel .brands-log{display:grid;gap:7px;max-height:220px;overflow:auto;margin:10px 0}
+#app #brandsPanel .brands-log li{font-size:12px;background:#291b2b;border-left:2px solid #aa687f;padding:9px 11px;list-style:none;border-radius:6px}
+#app #brandsPanel .brands-rules{display:grid;gap:9px;margin-top:15px}
+#app #brandsPanel details{border:1px solid #785368;border-radius:11px;background:#251a28;overflow:hidden}
+#app #brandsPanel details summary{padding:13px;font-weight:750;color:#f3cbb8;cursor:pointer}
+#app #brandsPanel details .brands-rule-body{padding:0 13px 13px;font-size:13px;line-height:1.6;color:#ded1d7}
+#app #brandsPanel details .brands-rule-body p{color:#e1d0d5}
+#app #brandsPanel .brands-subtitle{font-size:15px;color:#f4cfac;font-weight:800;margin:16px 0 6px}
+#app #brandsPanel .brands-muted{font-size:11px;color:#a994a7}
+#app #brandsPanel .brands-event{animation:brand-flash .45s ease-out}
+@keyframes brand-flash{from{box-shadow:0 0 0 2px #ffb5ad,0 0 30px #d96d8a88}to{box-shadow:0 0 0 0 transparent}}
+@media(max-width:760px){#app #brandsPanel{padding:13px}#app #brandsPanel h3{font-size:21px}#app #brandsPanel .brands-grid{grid-template-columns:1fr}#app #brandsPanel .brands-statline strong{font-size:16px}#app #brandsPanel .brands-buttons button{flex:1 1 43%}#app #brandsShortcut{min-height:54px}}
+@media(prefers-reduced-motion:reduce){#app #brandsPanel .brands-event{animation:none}}
