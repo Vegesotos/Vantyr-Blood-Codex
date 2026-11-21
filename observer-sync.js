@@ -143,7 +143,7 @@ function schedulePublish(){
 async function passwordLogin(){
  const email=$('observerEmail').value.trim().toLowerCase();
  const pwd=$('observerPassword').value;
- if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email)){status('Enter the owner email address.','bad');return}
+ if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){status('Enter the owner email address.','bad');return}
  if(!pwd){status('Enter your VANTYR password.','bad');return}
  const btn=$('observerPasswordLogin');btn.disabled=true;
  status('Signing in securely without email…');
