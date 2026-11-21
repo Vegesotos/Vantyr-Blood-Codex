@@ -18,3 +18,11 @@
 #observerGeneratedWrap[hidden],#observerSignedOut[hidden],#observerSignedIn[hidden]{display:none!important}
 .observer-panel .observer-note{border-left:3px solid #b77c79;padding-left:10px}
 @media(max-width:760px){.observer-panel{padding:15px}.observer-panel h2{font-size:21px}.observer-launch{font-size:10px;padding:7px!important}}
+
+/* In-app email OTP: same identity on WebView and PWA */
+.observer-code-wrap{margin-top:14px;padding:14px;background:linear-gradient(150deg,#392032,#1b1322);border:1px solid #966478;border-radius:13px}
+.observer-code-wrap[hidden]{display:none!important}
+.observer-code-wrap #observerCode{font:700 25px/1.2 system-ui,sans-serif;letter-spacing:.28em;text-align:center;color:#ffe7c2;min-height:54px}
+.observer-code-help{font-size:12px!important;color:#cfb6c2!important;margin:8px 0 3px}
+.observer-code-help code{font-size:12px;color:#f4d6ab;white-space:nowrap}
+.observer-panel button:disabled{opacity:.55;cursor:wait}
