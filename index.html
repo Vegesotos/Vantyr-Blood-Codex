@@ -283,15 +283,15 @@
 <p>Allow your Dungeon Master to monitor Vantyr's HP, active Oath Forms, Blood Curses and remaining combat resources. The DM cannot edit your character.</p>
 <div id="observerStatus" role="status">Live connection is off. Your game data still saves on your device.</div>
 <div id="observerSignedOut">
- <p class="observer-note"><strong>Sign in without leaving the app.</strong> Request a 6-digit email code, then enter it here. After your first successful sign-in, VANTYR stores and refreshes the session on this device. Your DM never needs an account.</p>
- <label class="observer-label">Your owner email
+ <p class="observer-note"><strong>Sign in without leaving VANTYR.</strong> Send a login email, copy the <strong>Sign in</strong> link (do not open it), then paste it into this app. Authentication and DM Sync finish here. Your character data stays on this device.</p>
+ <label class="observer-label">Owner email
  <input id="observerEmail" type="email" autocomplete="email" placeholder="your@email.com"/></label>
- <div class="observer-buttons"><button id="observerSendEmail" type="button" class="gold-btn">✉ Send Verification Code</button></div>
- <div id="observerCodeWrap" class="observer-code-wrap" hidden>
-  <label class="observer-label" for="observerCode">6-digit code from your email
-   <input id="observerCode" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="one-time-code" placeholder="••••••" aria-describedby="observerCodeHelp"/></label>
-  <p class="observer-code-help" id="observerCodeHelp">Type the code here, not in the mobile browser. If your email only contains a sign-in link, the Supabase Magic Link email template must include <code>{{ .Token }}</code> to show the code.</p>
-  <div class="observer-buttons"><button id="observerVerifyCode" type="button" class="gold-btn">✓ Verify &amp; Connect DM</button></div>
+ <div class="observer-buttons"><button id="observerSendEmail" type="button" class="gold-btn">✉ Email Me a Sign-in Link</button></div>
+ <div id="observerLinkWrap" class="observer-code-wrap" hidden>
+  <label class="observer-label" for="observerPastedLink">Paste the complete sign-in link here
+   <input id="observerPastedLink" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://…supabase.co/auth/v1/verify?…" aria-describedby="observerLinkHelp"/></label>
+  <p class="observer-code-help" id="observerLinkHelp">In the email, long-press <strong>Sign in</strong> and choose <strong>Copy link address</strong>. Return to VANTYR and paste it here. Don't tap/open the email link. This is a private, single-use login link.</p>
+  <div class="observer-buttons"><button id="observerPasteClipboard" type="button" class="ghost-btn">Paste from Clipboard</button><button id="observerVerifyLink" type="button" class="gold-btn">✓ Verify Inside VANTYR</button></div>
  </div>
 </div>
 <div id="observerSignedIn" hidden>
