@@ -291,16 +291,34 @@
  <p class="observer-note"><strong>Sign in without leaving VANTYR.</strong> Send a login email, copy the <strong>Sign in</strong> link (do not open it), then paste it into this app. Authentication and DM Sync finish here. Your character data stays on this device.</p>
  <label class="observer-label">Owner email
  <input id="observerEmail" type="email" autocomplete="email" placeholder="your@email.com"/></label>
- <div class="observer-buttons"><button id="observerSendEmail" type="button" class="gold-btn">✉ Email Me a Sign-in Link</button></div>
+ <div class="observer-password-login">
+  <div class="observer-auth-heading">RECOMMENDED · NO EMAIL REQUIRED</div>
+  <label class="observer-label" for="observerPassword">VANTYR account password
+   <input id="observerPassword" type="password" autocomplete="current-password" placeholder="Enter your account password"/></label>
+  <div class="observer-buttons"><button id="observerPasswordLogin" type="button" class="gold-btn">🔐 Sign In &amp; Sync With DM</button></div>
+  <p class="observer-note">To create a password, first open the VANTYR website in the browser where DM Sync is already authenticated. Under the connected account, select Set Password. Once saved, you can log in directly inside your Android app.</p>
+ </div>
+ <details class="observer-legacy-login"><summary>Alternative: sign in using an email link</summary>
+  <div class="observer-buttons"><button id="observerSendEmail" type="button" class="ghost-btn">✉ Email Me a Sign-in Link</button></div>
  <div id="observerLinkWrap" class="observer-code-wrap">
   <label class="observer-label" for="observerPastedLink">Paste the complete sign-in link here
    <input id="observerPastedLink" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://…supabase.co/auth/v1/verify?…" aria-describedby="observerLinkHelp"/></label>
   <p class="observer-code-help" id="observerLinkHelp">After requesting a new link, in the email long-press <strong>Sign in</strong> and choose <strong>Copy link address</strong>. Return to VANTYR and paste it here. Don't tap/open the email link. This is a private, single-use login link.</p>
   <div class="observer-buttons"><button id="observerPasteClipboard" type="button" class="ghost-btn">Paste from Clipboard</button><button id="observerVerifyLink" type="button" class="gold-btn">✓ Verify Inside VANTYR</button></div>
  </div>
+ </details>
 </div>
 <div id="observerSignedIn" hidden>
  <p id="observerLastSent">Waiting for first sync…</p>
+ <div class="observer-password-setup">
+  <div class="observer-auth-heading">ONE-TIME SETUP · ENABLE LOGIN WITHOUT EMAIL</div>
+  <p>Already signed in on this browser? Create a VANTYR password here, then use that same email and password in the Android app. This keeps your existing owner identity and DM permissions.</p>
+  <label class="observer-label">Create a password (12+ characters)
+   <input id="observerNewPassword" type="password" autocomplete="new-password" minlength="12" placeholder="Choose a strong password"/></label>
+  <label class="observer-label">Confirm password
+   <input id="observerConfirmPassword" type="password" autocomplete="new-password" minlength="12" placeholder="Repeat the password"/></label>
+  <div class="observer-buttons"><button type="button" id="observerSavePassword" class="gold-btn">🔐 Set Password For Android</button></div>
+ </div>
  <div class="observer-buttons"><button id="observerNewLink" class="gold-btn" type="button">✦ Create / Replace DM Link</button><button id="observerRevoke" class="ghost-btn" type="button">Revoke DM Link</button></div>
 <p id="observerLinkHint" class="observer-note">Your DM should keep the full private invitation URL. You only need to generate it once.</p>
  <div id="observerGeneratedWrap" hidden>
