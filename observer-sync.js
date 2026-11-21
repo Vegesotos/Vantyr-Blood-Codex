@@ -140,45 +140,58 @@ function schedulePublish(){
   clearTimeout(pendingTimer);
   pendingTimer=setTimeout(()=>{publish().catch(e=>status(e.message,'bad'))},450);
 }
-let emailForVerification='';
 async function login(){
   const email=$('observerEmail').value.trim().toLowerCase();
-  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){status('Enter your email address.','bad');return;}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){status('Enter your owner email address.','bad');return;}
   const send=$('observerSendEmail');
   send.disabled=true;
-  status('Sending your VANTYR verification code…');
+  status('Sending a sign-in link to your email…');
   try{
-    await request('/auth/v1/otp?redirect_to='+encodeURIComponent(location.origin+location.pathname),{body:{email,create_user:true}});
-    emailForVerification=email;
-    $('observerCodeWrap').hidden=false;
-    $('observerCode').value='';
-    status('Email sent. Enter the 6-digit code below WITHOUT opening a browser link.','good');
-    $('observerCode').focus();
-  }catch(err){status('Sign-in request failed: '+err.message,'bad')}
+    await request('/auth/v1/otp?redirect_to='+encodeURIComponent(location.origin+location.pathname),{body:{email,create_user:false}});
+    $('observerLinkWrap').hidden=false;
+    $('observerPastedLink').value='';
+    status('Email sent. COPY the Sign in link and PASTE it below inside VANTYR. Do not tap the link.','good');
+    $('observerPastedLink').focus();
+  }catch(err){status('Could not send sign-in email: '+err.message,'bad')}
   finally{send.disabled=false}
 }
-async function verifyCode(){
-  const email=emailForVerification||$('observerEmail').value.trim().toLowerCase();
-  const code=$('observerCode').value.replace(/\s+/g,'');
-  if(!/^[0-9]{6,8}$/.test(code)){status('Enter the 6-digit verification code from your email.','bad');return;}
-  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){status('Enter your owner email address.','bad');return;}
-  const verify=$('observerVerifyCode');verify.disabled=true;
-  status('Verifying inside VANTYR…');
-  try{
-    const response=await request('/auth/v1/verify',{body:{email,token:code,type:'email'}});
-    if(!response.access_token||!response.refresh_token)throw new Error('The verification response did not contain a session.');
-    session={access_token:response.access_token,refresh_token:response.refresh_token,expires_at:Math.floor(Date.now()/1000)+Number(response.expires_in||3600)};
-    approved=false;
-    saveSession();
-    $('observerCode').value='';
-    $('observerCodeWrap').hidden=true;
-    emailForVerification='';
-    status('Authenticated inside VANTYR. Connecting to the DM…','good');
-    await claim();
-  }catch(err){status('Code verification failed: '+err.message+'. Request a fresh code if it expired.','bad')}
-  finally{verify.disabled=false}
+function parseMailLink(raw){
+  const value=String(raw||'').trim();
+  if(!value||value.length>8192)throw new Error('Paste the entire sign-in link from your email.');
+  let url;
+  try{url=new URL(value)}catch(e){throw new Error('Paste the complete https:// sign-in URL, not the email text.')}
+  const expected=new URL(api);
+  if(url.protocol!=='https:'||url.origin!==expected.origin||url.pathname!=='/auth/v1/verify'){
+    throw new Error('This is not a VANTYR Supabase verification link. Copy the actual Sign in link from the email.');
+  }
+  const token=url.searchParams.get('token')||url.searchParams.get('token_hash');
+  const type=url.searchParams.get('type');
+  if(!token||!/^[A-Za-z0-9_-]{12,512}$/.test(token))throw new Error('The email link is missing a valid verification token.');
+  if(!['magiclink','email','signup'].includes(type))throw new Error('This email link is not a supported sign-in link.');
+  return {token_hash:token,type};
 }
-function revokeLocal(){session=null;approved=false;lastHash='';emailForVerification='';$('observerCode').value='';$('observerCodeWrap').hidden=true;saveSession();$('observerSignedOut').hidden=false;$('observerSignedIn').hidden=true;status('Signed out. Live sharing is paused.')}
+async function verifyPastedLink(){
+  let link;
+  try{link=parseMailLink($('observerPastedLink').value)}
+  catch(err){status(err.message,'bad');return}
+  const button=$('observerVerifyLink');
+  button.disabled=true;
+  status('Verifying your email link inside VANTYR…');
+  try{
+    const response=await request('/auth/v1/verify',{body:link});
+    if(!response.access_token||!response.refresh_token)throw new Error('No session was returned. Request a new link.');
+    session={access_token:response.access_token,refresh_token:response.refresh_token,expires_at:Math.floor(Date.now()/1000)+Number(response.expires_in||3600)};
+    approved=false;saveSession();
+    $('observerPastedLink').value='';
+    $('observerLinkWrap').hidden=true;
+    status('Authenticated inside VANTYR. Connecting DM Sync…','good');
+    await claim();
+  }catch(err){
+    // Never display the pasted link, verification token or auth session in errors.
+    status('Verification failed: '+err.message+'. Email links are single-use; request another if the link has expired or was opened already.','bad');
+  }finally{button.disabled=false}
+}
+function revokeLocal(){session=null;approved=false;lastHash='';$('observerPastedLink').value='';$('observerLinkWrap').hidden=true;saveSession();$('observerSignedOut').hidden=false;$('observerSignedIn').hidden=true;status('Signed out. Live sharing is paused.')}
 function randomToken(){
   const bytes=new Uint8Array(32);crypto.getRandomValues(bytes);return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
 }
@@ -232,8 +245,12 @@ function wire(){
   $('observerClose').addEventListener('click',()=>{$('observerSettings').hidden=true});
   $('observerSettings').addEventListener('click',e=>{if(e.target===$('observerSettings'))$('observerSettings').hidden=true});
   $('observerSendEmail').addEventListener('click',login);
-  $('observerVerifyCode').addEventListener('click',verifyCode);
-  $('observerCode').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();verifyCode()}});
+  $('observerVerifyLink').addEventListener('click',verifyPastedLink);
+  $('observerPastedLink').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();verifyPastedLink()}});
+  $('observerPasteClipboard').addEventListener('click',async()=>{
+    try{$('observerPastedLink').value=await navigator.clipboard.readText();status('Link pasted. Select Verify Inside VANTYR.')}
+    catch(e){status('Clipboard access unavailable. Long-press the field and choose Paste.')}
+  });
   $('observerSignOut').addEventListener('click',revokeLocal);
   $('observerNewLink').addEventListener('click',rotate);
   $('observerRevoke').addEventListener('click',revoke);
