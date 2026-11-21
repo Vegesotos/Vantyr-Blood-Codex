@@ -140,6 +140,38 @@ function schedulePublish(){
   clearTimeout(pendingTimer);
   pendingTimer=setTimeout(()=>{publish().catch(e=>status(e.message,'bad'))},450);
 }
+async function passwordLogin(){
+ const email=$('observerEmail').value.trim().toLowerCase();
+ const pwd=$('observerPassword').value;
+ if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email)){status('Enter the owner email address.','bad');return}
+ if(!pwd){status('Enter your VANTYR password.','bad');return}
+ const btn=$('observerPasswordLogin');btn.disabled=true;
+ status('Signing in securely without email…');
+ try{
+   const response=await request('/auth/v1/token?grant_type=password',{body:{email,password:pwd}});
+   if(!response.access_token||!response.refresh_token)throw new Error('No session returned.');
+   session={access_token:response.access_token,refresh_token:response.refresh_token,expires_at:Math.floor(Date.now()/1000)+Number(response.expires_in||3600)};
+   approved=false;saveSession();$('observerPassword').value='';
+   status('Signed in. Connecting live DM sharing…','good');
+   await claim();
+ }catch(err){status('Password sign-in failed: '+err.message,'bad')}
+ finally{btn.disabled=false;$('observerPassword').value=''}
+}
+async function setOwnerPassword(){
+ if(!approved||!session){status('Open VANTYR in the browser where DM Sync already says Connected, then set a password.','bad');return}
+ const one=$('observerNewPassword'),two=$('observerConfirmPassword');
+ const password=one.value;
+ if(password.length<12||password.length>128){status('Choose a password between 12 and 128 characters.','bad');return}
+ if(password!==two.value){status('The passwords do not match.','bad');return}
+ const btn=$('observerSavePassword');btn.disabled=true;
+ status('Setting a password for your authenticated VANTYR owner account…');
+ try{
+   await request('/auth/v1/user',{method:'PUT',body:{password},auth:true});
+   one.value='';two.value='';
+   status('Password saved. Now open the Android VANTYR app, choose DM Sync, and sign in using your email and this password. No new email is needed.','good');
+ }catch(err){status('Password could not be set: '+err.message+'. A recent sign-in or reauthentication may be required.','bad')}
+ finally{btn.disabled=false}
+}
 async function login(){
   const email=$('observerEmail').value.trim().toLowerCase();
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){status('Enter your owner email address.','bad');return;}
@@ -251,6 +283,9 @@ function wire(){
     document.querySelector('#phase1Dashboard')?.scrollIntoView({behavior:'smooth',block:'start'});
   });
   $('observerSettings').addEventListener('click',e=>{if(e.target===$('observerSettings'))$('observerSettings').hidden=true});
+  $('observerPasswordLogin').addEventListener('click',passwordLogin);
+  $('observerSavePassword').addEventListener('click',setOwnerPassword);
+  $('observerPassword').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();passwordLogin()}});
   $('observerSendEmail').addEventListener('click',login);
   $('observerVerifyLink').addEventListener('click',verifyPastedLink);
   $('observerPastedLink').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();verifyPastedLink()}});
