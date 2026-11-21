@@ -191,7 +191,7 @@ async function verifyPastedLink(){
     status('Verification failed: '+err.message+'. Email links are single-use; request another if the link has expired or was opened already.','bad');
   }finally{button.disabled=false}
 }
-function revokeLocal(){session=null;approved=false;lastHash='';$('observerPastedLink').value='';$('observerLinkWrap').hidden=true;saveSession();$('observerSignedOut').hidden=false;$('observerSignedIn').hidden=true;status('Signed out. Live sharing is paused.')}
+function revokeLocal(){session=null;approved=false;lastHash='';$('observerPastedLink').value='';$('observerLinkWrap').hidden=false;saveSession();$('observerSignedOut').hidden=false;$('observerSignedIn').hidden=true;status('Signed out. Live sharing is paused.')}
 function randomToken(){
   const bytes=new Uint8Array(32);crypto.getRandomValues(bytes);return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
 }
