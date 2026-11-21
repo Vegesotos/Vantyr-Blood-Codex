@@ -140,16 +140,45 @@ function schedulePublish(){
   clearTimeout(pendingTimer);
   pendingTimer=setTimeout(()=>{publish().catch(e=>status(e.message,'bad'))},450);
 }
+let emailForVerification='';
 async function login(){
   const email=$('observerEmail').value.trim().toLowerCase();
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){status('Enter your email address.','bad');return;}
-  status('Sending sign-in email…');
+  const send=$('observerSendEmail');
+  send.disabled=true;
+  status('Sending your VANTYR verification code…');
   try{
     await request('/auth/v1/otp?redirect_to='+encodeURIComponent(location.origin+location.pathname),{body:{email,create_user:true}});
-    status('Check your email for a VANTYR sign-in link. Open it on this device.','good');
-  }catch(err){status('Sign-in failed: '+err.message,'bad')}
+    emailForVerification=email;
+    $('observerCodeWrap').hidden=false;
+    $('observerCode').value='';
+    status('Email sent. Enter the 6-digit code below WITHOUT opening a browser link.','good');
+    $('observerCode').focus();
+  }catch(err){status('Sign-in request failed: '+err.message,'bad')}
+  finally{send.disabled=false}
 }
-function revokeLocal(){session=null;approved=false;lastHash='';saveSession();$('observerSignedOut').hidden=false;$('observerSignedIn').hidden=true;status('Signed out. Live sharing is paused.')}
+async function verifyCode(){
+  const email=emailForVerification||$('observerEmail').value.trim().toLowerCase();
+  const code=$('observerCode').value.replace(/\s+/g,'');
+  if(!/^[0-9]{6,8}$/.test(code)){status('Enter the 6-digit verification code from your email.','bad');return;}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){status('Enter your owner email address.','bad');return;}
+  const verify=$('observerVerifyCode');verify.disabled=true;
+  status('Verifying inside VANTYR…');
+  try{
+    const response=await request('/auth/v1/verify',{body:{email,token:code,type:'email'}});
+    if(!response.access_token||!response.refresh_token)throw new Error('The verification response did not contain a session.');
+    session={access_token:response.access_token,refresh_token:response.refresh_token,expires_at:Math.floor(Date.now()/1000)+Number(response.expires_in||3600)};
+    approved=false;
+    saveSession();
+    $('observerCode').value='';
+    $('observerCodeWrap').hidden=true;
+    emailForVerification='';
+    status('Authenticated inside VANTYR. Connecting to the DM…','good');
+    await claim();
+  }catch(err){status('Code verification failed: '+err.message+'. Request a fresh code if it expired.','bad')}
+  finally{verify.disabled=false}
+}
+function revokeLocal(){session=null;approved=false;lastHash='';emailForVerification='';$('observerCode').value='';$('observerCodeWrap').hidden=true;saveSession();$('observerSignedOut').hidden=false;$('observerSignedIn').hidden=true;status('Signed out. Live sharing is paused.')}
 function randomToken(){
   const bytes=new Uint8Array(32);crypto.getRandomValues(bytes);return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
 }
@@ -203,6 +232,8 @@ function wire(){
   $('observerClose').addEventListener('click',()=>{$('observerSettings').hidden=true});
   $('observerSettings').addEventListener('click',e=>{if(e.target===$('observerSettings'))$('observerSettings').hidden=true});
   $('observerSendEmail').addEventListener('click',login);
+  $('observerVerifyCode').addEventListener('click',verifyCode);
+  $('observerCode').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();verifyCode()}});
   $('observerSignOut').addEventListener('click',revokeLocal);
   $('observerNewLink').addEventListener('click',rotate);
   $('observerRevoke').addEventListener('click',revoke);
