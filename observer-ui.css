@@ -26,3 +26,8 @@
 .observer-code-help{font-size:12px!important;color:#cfb6c2!important;margin:8px 0 3px}
 .observer-code-help code{font-size:12px;color:#f4d6ab;white-space:nowrap}
 .observer-panel button:disabled{opacity:.55;cursor:wait}
+
+/* DM Sync link-copy authentication, no browser handoff */
+.observer-code-wrap #observerPastedLink{font:13px/1.4 system-ui,sans-serif;letter-spacing:normal;text-align:left;min-height:51px;color:#ffe8d0;overflow:hidden;text-overflow:ellipsis}
+#observerPasteClipboard{border:1px solid #866176;background:#392638;color:#f2d8e3;border-radius:10px;padding:8px 12px}
+#observerVerifyLink{flex:1;min-width:170px}
