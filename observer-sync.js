@@ -243,6 +243,13 @@ function wire(){
     if(session&&!approved)claim();
   });
   $('observerClose').addEventListener('click',()=>{$('observerSettings').hidden=true});
+  $('observerPlayOffline').addEventListener('click',()=>{
+    $('observerSettings').hidden=true;
+    status('Playing locally. DM Sync is optional and can be connected later.','good');
+    const combat=document.querySelector('[data-tab="combat"]');
+    if(combat && combat.getAttribute('aria-selected')!=='true')combat.click();
+    document.querySelector('#phase1Dashboard')?.scrollIntoView({behavior:'smooth',block:'start'});
+  });
   $('observerSettings').addEventListener('click',e=>{if(e.target===$('observerSettings'))$('observerSettings').hidden=true});
   $('observerSendEmail').addEventListener('click',login);
   $('observerVerifyLink').addEventListener('click',verifyPastedLink);
