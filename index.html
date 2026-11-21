@@ -283,10 +283,16 @@
 <p>Allow your Dungeon Master to monitor Vantyr's HP, active Oath Forms, Blood Curses and remaining combat resources. The DM cannot edit your character.</p>
 <div id="observerStatus" role="status">Live connection is off. Your game data still saves on your device.</div>
 <div id="observerSignedOut">
- <p class="observer-note"><strong>One-time setup:</strong> Run the owner-protected SQL file in your Supabase SQL Editor, configure your Supabase Auth redirect URL, then sign in below. Your DM never needs an account.</p>
- <label class="observer-label">Your owner email (the one configured in Supabase SQL)
+ <p class="observer-note"><strong>Sign in without leaving the app.</strong> Request a 6-digit email code, then enter it here. After your first successful sign-in, VANTYR stores and refreshes the session on this device. Your DM never needs an account.</p>
+ <label class="observer-label">Your owner email
  <input id="observerEmail" type="email" autocomplete="email" placeholder="your@email.com"/></label>
- <div class="observer-buttons"><button id="observerSendEmail" type="button" class="gold-btn">✉ Send Sign-in Link</button></div>
+ <div class="observer-buttons"><button id="observerSendEmail" type="button" class="gold-btn">✉ Send Verification Code</button></div>
+ <div id="observerCodeWrap" class="observer-code-wrap" hidden>
+  <label class="observer-label" for="observerCode">6-digit code from your email
+   <input id="observerCode" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="8" autocomplete="one-time-code" placeholder="••••••" aria-describedby="observerCodeHelp"/></label>
+  <p class="observer-code-help" id="observerCodeHelp">Type the code here, not in the mobile browser. If your email only contains a sign-in link, the Supabase Magic Link email template must include <code>{{ .Token }}</code> to show the code.</p>
+  <div class="observer-buttons"><button id="observerVerifyCode" type="button" class="gold-btn">✓ Verify &amp; Connect DM</button></div>
+ </div>
 </div>
 <div id="observerSignedIn" hidden>
  <p id="observerLastSent">Waiting for first sync…</p>
